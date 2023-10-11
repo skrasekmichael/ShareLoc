@@ -1,0 +1,73 @@
+name: CI
+
+env:
+  SERVER: src/Server/ShareLoc.Server.App/ShareLoc.Server.App.csproj
+  MAUI: src/Client/ShareLoc.Client.App/ShareLoc.Client.APp.csproj
+  DOTNET_NOLOGO: true                     # Disable the .NET logo
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true # Disable the .NET first time experience
+  DOTNET_CLI_TELEMETRY_OPTOUT: true       # Disable sending .NET CLI telemetry
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_server:
+    name: Build Server
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SERVER }}
+
+    - name: Build
+      run: dotnet build ${{ env.SERVER }} --no-restore
+
+  build_maui_android:
+    name: Build MAUI for Android
+    runs-on: windows-latest # windows needed for dotnet workload
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Install MAUI workload
+      run: dotnet workload install maui
+
+    - name: Build
+      run: dotnet build ${{ env.MAUI }} -c Release -f:net7.0-android
+
+  build_maui_ios:
+    name: Build MAUI for IOS
+    runs-on: windows-latest # windows needed for dotnet workload
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Install MAUI workload
+      run: dotnet workload install maui
+
+    - name: Build
+      run: dotnet build ${{ env.MAUI }} -c Release -f:net7.0-ios
