@@ -8,12 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotLiquid" Version="2.2.692" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\ShareLoc.Shared.Common\ShareLoc.Shared.Common.csproj" />
     <ProjectReference Include="..\ShareLoc.Server.DAL\ShareLoc.Server.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <Resource Include="Pages\*.liquid" />
   </ItemGroup>
+
+  <Target Name="EmbeddedPages" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <Pages Include="Pages\*.liquid" />
+      <UpToDateCheckInput Include="@(Pages)" />
+      <EmbeddedResource Include="@(Pages)">
+        <LogicalName>Pages.%(FileName)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 
 </Project>
