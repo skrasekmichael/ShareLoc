@@ -10,8 +10,8 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddCommon(this IServiceCollection services)
 	{
-		services.AddScoped<IValidator<CreatePlaceRequest>, CreatePlaceRequestValidator>();
-		services.AddScoped<IValidator<CreateGuessRequest>, CreateGuessRequestValidator>();
+		services.AddScoped<IValidator<PlaceRequest>, PlaceRequestValidator>();
+		services.AddScoped<IValidator<GuessRequest>, GuessRequestValidator>();
 
 		return services;
 	}

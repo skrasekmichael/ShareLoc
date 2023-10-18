@@ -2,17 +2,17 @@
 
 namespace ShareLoc.Shared.Common.Models;
 
-public sealed class CreateGuessRequest
+public sealed class PlaceRequest
 {
-	public required Guid PlaceId { get; init; }
 	public required double Latitude { get; init; }
 	public required double Longitude { get; init; }
-	public required string Name { get; init; }
+	public required string Message { get; init; }
+	public required byte[] Image { get; init; }
 }
 
-public sealed class CreateGuessRequestValidator : AbstractValidator<CreateGuessRequest>
+public sealed class PlaceRequestValidator : AbstractValidator<PlaceRequest>
 {
-	public CreateGuessRequestValidator()
+	public PlaceRequestValidator()
 	{
 		RuleFor(x => x.Latitude)
 			.InclusiveBetween(-90, 90)
@@ -22,8 +22,8 @@ public sealed class CreateGuessRequestValidator : AbstractValidator<CreateGuessR
 			.InclusiveBetween(-180, 180)
 			.WithMessage("Longitude has to be number between -180 and 180.");
 
-		RuleFor(x => x.Name)
+		RuleFor(x => x.Message)
 			.MaximumLength(30)
-			.WithMessage("Name has maximum length of 30 characters.");
+			.WithMessage("Message has maximum length of 30 characters.");
 	}
 }
