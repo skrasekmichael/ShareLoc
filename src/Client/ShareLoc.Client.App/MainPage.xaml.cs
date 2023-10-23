@@ -1,4 +1,8 @@
-﻿namespace ShareLoc.Client.App;
+﻿using System;
+using System.Diagnostics;
+using ShareLoc.Client.App.ViewModels;
+
+namespace ShareLoc.Client.App;
 
 public partial class MainPage : ContentPage
 {
@@ -7,6 +11,8 @@ public partial class MainPage : ContentPage
 	public MainPage()
 	{
 		InitializeComponent();
+
+		BindingContext = new MainPageViewModel();
 	}
 
 	private void OnCounterClicked(object sender, EventArgs e)
