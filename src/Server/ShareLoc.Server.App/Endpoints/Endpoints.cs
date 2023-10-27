@@ -13,7 +13,7 @@ public sealed class Endpoints : IEndpoints
 	{
 		app.MapPost("/api/guesses", async (GuessRequest request, GuessService guessService) =>
 		{
-			GuessResponse? response = await guessService.CreateGuessAsync(request);
+			GuessResultResponse? response = await guessService.CreateGuessAsync(request);
 
 			return response is not null ? Results.Ok(response) : Results.BadRequest();
 		});

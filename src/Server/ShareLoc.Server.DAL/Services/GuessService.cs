@@ -31,19 +31,21 @@ public sealed class GuessService
 			Latitude = guess.Latitude,
 			Longitude = guess.Longitude,
 			Name = guess.Name,
-			Score = guess.Score
+			Score = guess.Score,
+			Distance = guess.Distance
 		};
 
 		return response;
 	}
 
-	public async Task<GuessResponse?> CreateGuessAsync(GuessRequest request)
+	public async Task<GuessResultResponse?> CreateGuessAsync(GuessRequest request)
 	{
 		Place? place = await _placeRepository.GetPlaceByIdAsync(request.PlaceId);
 
 		if (place is null) return null;
 
-		int score = EarthCircumferenceHalf - (int)CalculateDistance(request.Latitude, request.Longitude, place.Latitude, place.Longitude);
+		double distance = CalculateDistance(request.Latitude, request.Longitude, place.Latitude, place.Longitude);
+		int score = EarthCircumferenceHalf - (int)distance;
 		int normalizedScore = (int)(score * NormalizationConstant);
 
 		Guess newGuess = new Guess()
@@ -53,17 +55,18 @@ public sealed class GuessService
 			Longitude = request.Longitude,
 			Name = request.Name,
 			Score = normalizedScore,
+			Distance = distance,
 			PlaceId = request.PlaceId
 		};
 
 		await _guessRepository.InsertGuessAsync(newGuess);
 
-		GuessResponse response = new GuessResponse()
+		GuessResultResponse response = new GuessResultResponse()
 		{
-			Latitude = newGuess.Latitude,
-			Longitude = newGuess.Longitude,
-			Name = newGuess.Name,
-			Score = newGuess.Score
+			CorrectLatitude = place.Latitude,
+			CorrectLongitude = place.Longitude,
+			Score = normalizedScore,
+			Distance = distance
 		};
 
 		return response;
