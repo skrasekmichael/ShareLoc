@@ -1,5 +1,7 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 
+using ShareLoc.Server.DAL.Converters;
+
 namespace ShareLoc.Server.DAL.Entities;
 
 [DynamoDBTable("Places")]
@@ -13,4 +15,7 @@ public sealed record Place
 	public required string Message { get; init; }
 	public required byte[] Image { get; init; }
 	public required DateTime TimeStampUTC { get; init; }
+
+	[DynamoDBProperty(typeof(GuessListConverter))]
+	public required List<Guess> Guesses { get; init; }
 }

@@ -20,9 +20,9 @@ public sealed class GuessService
 		_guessRepository = guessRepository;
 	}
 
-	public async Task<GuessResponse?> GetGuessByIdAsync(Guid id)
+	public async Task<GuessResponse?> GetGuessByIdAsync(Guid guessId)
 	{
-		Guess? guess = await _guessRepository.GetGuessByIdAsync(id);
+		Guess? guess = await _guessRepository.GetGuessByIdAsync(guessId);
 
 		if (guess == null) return null;
 
@@ -56,10 +56,14 @@ public sealed class GuessService
 			Name = request.Name,
 			Score = normalizedScore,
 			Distance = distance,
-			PlaceId = request.PlaceId
+			PlaceId = request.PlaceId,
+			GuesserId = request.GuesserId
 		};
 
+		place.Guesses.Add(newGuess);
+
 		await _guessRepository.InsertGuessAsync(newGuess);
+		await _placeRepository.InsertPlaceAsync(place);
 
 		GuessResultResponse response = new GuessResultResponse()
 		{

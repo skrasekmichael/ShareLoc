@@ -11,7 +11,7 @@ public sealed class Endpoints : IEndpoints
 
 	public void AddEndpoints(WebApplication app)
 	{
-		app.MapPost("/api/guesses", async (GuessRequest request, GuessService guessService) =>
+		app.MapPost("/api/places/{placeId:guid}/guesses", async (GuessRequest request, GuessService guessService) =>
 		{
 			GuessResultResponse? response = await guessService.CreateGuessAsync(request);
 
@@ -32,11 +32,18 @@ public sealed class Endpoints : IEndpoints
 			Results.Ok(id);
 		});
 
-		app.MapGet("/api/places/{id}", async (Guid id, PlaceRepository placeRespository) =>
+		app.MapGet("/api/places/{placeId:guid}", async (Guid placeId, PlaceRepository placeRespository) =>
 		{
-			Place? place = await placeRespository.GetPlaceByIdAsync(id);
+			Place? place = await placeRespository.GetPlaceByIdAsync(placeId);
 
 			return place is not null ? Results.Ok(place) : Results.BadRequest();
+		});
+
+		app.MapGet("/api/{guesserId:guid}/guesses", async (Guid guesserId, GuessRepository guessRepository) =>
+		{
+			List<Guess> guesses = await guessRepository.GetGuessesByGuesserIdAsync(guesserId);
+
+			return Results.Ok(guesses);
 		});
 	}
 }

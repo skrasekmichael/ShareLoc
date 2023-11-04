@@ -22,11 +22,19 @@ public sealed class PlaceService
 			Longitude = request.Longitude,
 			Message = request.Message,
 			Image = request.Image,
-			TimeStampUTC = DateTime.UtcNow
+			TimeStampUTC = DateTime.UtcNow,
+			Guesses = new List<Guess>()
 		};
 
 		await _placeRepository.InsertPlaceAsync(newPlace);
 
 		return newPlace.Id;
+	}
+
+	public async Task<List<Guess>?> GetGuessesByPlaceId(Guid placeId)
+	{
+		Place? place = await _placeRepository.GetPlaceByIdAsync(placeId);
+
+		return place?.Guesses;
 	}
 }

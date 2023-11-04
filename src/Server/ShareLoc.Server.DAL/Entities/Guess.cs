@@ -15,4 +15,5 @@ public sealed record Guess
 	public required double Distance { get; init; }
 
 	public required Guid PlaceId { get; init; }
+	public required Guid GuesserId { get; init; }
 }
