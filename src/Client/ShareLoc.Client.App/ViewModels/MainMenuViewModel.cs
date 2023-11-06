@@ -1,27 +1,31 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+
+using ShareLoc.Client.App.Services;
+using ShareLoc.Client.App.Views.Pages;
 
 namespace ShareLoc.Client.App.ViewModels;
 
-internal sealed partial class MainMenuViewModel : ObservableObject
+public sealed partial class MainMenuViewModel : BaseViewModel
 {
+	private readonly INavigationService _navigationService;
+
 	public string AppVersion => AppInfo.Current.VersionString;
 
-	[RelayCommand]
-	public void GoToCreatePlacePage()
+	public MainMenuViewModel(INavigationService navigationService)
 	{
-
+		_navigationService = navigationService;
 	}
 
 	[RelayCommand]
-	public void GoToGalleryPage()
+	public Task GoToCreatePlacePage()
 	{
-
+		//TODO
+		return Task.CompletedTask;
 	}
 
 	[RelayCommand]
-	public void GoToMyGuessesPage()
-	{
+	public Task GoToMyPlacesPage() => _navigationService.GoToAsync<MyPlacesPage, MyPlacesViewModel>();
 
-	}
+	[RelayCommand]
+	public Task GoToMyGuessesPage() => _navigationService.GoToAsync<MyGuessesPage, MyGuessesViewModel>();
 }

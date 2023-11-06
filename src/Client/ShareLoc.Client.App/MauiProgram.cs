@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using ShareLoc.Client.App.Extensions;
 using ShareLoc.Shared.Common;
 
 namespace ShareLoc.Client.App;
@@ -17,7 +18,10 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		builder.Services.AddCommon();
+		builder.Services
+			.AddCommon()
+			.AddViewsAndViewModels()
+			.AddServices();
 
 #if DEBUG
 		builder.Logging.AddDebug();
