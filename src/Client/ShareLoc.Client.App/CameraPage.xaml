@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cv="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
+             x:Class="ShareLoc.Client.App.CameraPage">
+	<ContentView BackgroundColor="Black">
+		<!-- Create a container for the camera view and an overlay with a small circular button and a stepper for chaging the camera zoom -->
+		<Grid HorizontalOptions="FillAndExpand">
+			<cv:CameraView x:Name="cameraView" VerticalOptions="Center" MinimumHeightRequest="400" MinimumWidthRequest="300" ZIndex="0" Grid.Row="0" CamerasLoaded="CameraView_CamerasLoaded" BindingContext="{x:Reference ZoomSlider}" ZoomFactor="{x:Binding Path=Value}"/>
+			<!-- Button at the Bottom -->
+			<Button BackgroundColor="Blue" BorderColor="White" BorderWidth="3" WidthRequest="50" HeightRequest="50" CornerRadius="25" HorizontalOptions="CenterAndExpand" VerticalOptions="EndAndExpand" Clicked="Button_Clicked" />
+
+			<!-- Stepper on the Right -->
+			<Slider Grid.Row="1" Grid.Column="1" WidthRequest="300" Minimum="0" Maximum="10" ValueChanged="Slider_ValueChanged" x:Name="ZoomSlider"
+                HorizontalOptions="Center" VerticalOptions="StartAndExpand"/>
+		</Grid>
+	</ContentView>
+
+</ContentPage>
