@@ -36,9 +36,9 @@ public sealed class Endpoints : IEndpoints
 			ValidationResult res = requestValidator.Validate(request);
 			if (!res.IsValid) return Results.BadRequest(res.Errors);
 
-			Guid id = await placeService.CreatePlaceAsync(request, token);
+			Guid placeId = await placeService.CreatePlaceAsync(request, token);
 
-			Results.Ok(id);
+			return Results.Ok(placeId);
 		});
 
 		app.MapGet("/api/places/{placeId:guid}", async (Guid placeId, PlaceRepository placeRespository, CancellationToken token) =>
