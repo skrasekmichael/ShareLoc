@@ -1,3 +1,6 @@
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+
 using ShareLoc.Server.App.Endpoints;
 using ShareLoc.Server.App.Extensions;
 using ShareLoc.Server.DAL;
