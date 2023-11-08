@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2;
 
 using ShareLoc.Server.App.Endpoints;
 
@@ -11,5 +12,18 @@ public static class WebApplicationExtensions
 		var endpoint = new TEndpoints();
 		endpoint.AddEndpoints(app);
 		return app;
+	}
+
+	public static IServiceCollection AddDBContext(this IServiceCollection services, string serviceURL, string authRegion)
+	{
+		AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
+		clientConfig.ServiceURL = serviceURL;
+		clientConfig.AuthenticationRegion = authRegion;
+
+		AmazonDynamoDBClient client = new AmazonDynamoDBClient(clientConfig);
+		services.AddSingleton<IAmazonDynamoDB>(client);
+		services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+
+		return services;
 	}
 }
