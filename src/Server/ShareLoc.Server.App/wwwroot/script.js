@@ -55,14 +55,14 @@ async function guessLocationAsync() {
 	const [long, lat] = guessCoords.toWGS84();
 
 	const request = {
-		PlaceId: placeId,
+		GuesserId: myId,
 		Latitude: lat,
 		Longitude: long,
 		Name: myName
 	};
 
 	try {
-		const response = await fetch(`/api/place/${placeId}/createGuess`, {
+		const response = await fetch(`/api/places/${placeId}/guesses`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -153,20 +153,20 @@ function mapDisplayGuessResult(correctCoords, guessCoords) {
 
 function calculateCurvePoints(startPoint, middlePoint, endPoint, distance) {
 	const numPoints = Math.ceil(distance / 20000);
-    const curvePoints = [];
+	const curvePoints = [];
 
-    for (let i = 0; i <= numPoints; i++) {
-        const t = i / numPoints;
-        const x = interpolate(startPoint.x, middlePoint.x, endPoint.x, t);
-        const y = interpolate(startPoint.y, middlePoint.y, endPoint.y, t);
-        curvePoints.push(new SMap.Coords(x, y));
-    }
+	for (let i = 0; i <= numPoints; i++) {
+		const t = i / numPoints;
+		const x = interpolate(startPoint.x, middlePoint.x, endPoint.x, t);
+		const y = interpolate(startPoint.y, middlePoint.y, endPoint.y, t);
+		curvePoints.push(new SMap.Coords(x, y));
+	}
 
-    return curvePoints;
+	return curvePoints;
 }
 
 function interpolate(start, middle, end, t) {
-    return (1 - t) * (1 - t) * start + 2 * (1 - t) * t * middle + t * t * end;
+	return (1 - t) * (1 - t) * start + 2 * (1 - t) * t * middle + t * t * end;
 }
 
 function formatDistance(distance) {
@@ -185,7 +185,7 @@ function toggleClass(elem, className) {
 async function fetchGuessesAsync() {
 	try
 	{
-		const response = await fetch(`/api/place/${placeId}/guesses`, {
+		const response = await fetch(`/api/places/${placeId}/guesses`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",

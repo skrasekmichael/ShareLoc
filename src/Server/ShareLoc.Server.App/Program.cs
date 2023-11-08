@@ -1,16 +1,15 @@
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
-
 using ShareLoc.Server.App.Endpoints;
 using ShareLoc.Server.App.Extensions;
 using ShareLoc.Server.App.Middlewares;
 using ShareLoc.Server.App.Pages;
-using ShareLoc.Server.DAL;
+using ShareLoc.Server.DAL.Extensions;
 using ShareLoc.Shared.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConfigurationManager config = builder.Configuration;
+builder.Configuration
+	.AddEnvironmentVariables(prefix: "SHARELOC_")
+	.Build();
 
 // Add services to the container.
 builder.Services.AddCommon();
@@ -20,17 +19,20 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCommon();
 builder.Services.AddDAL();
-builder.Services.AddDBContext(config["ServiceURL"]!, config["AuthenticationRegion"]!);
+builder.Services.AddDBContext(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+	await app.Services.EnsureTablesCreatedAsync();
+
 	app.UseSwagger();
 	app.UseSwaggerUI();
 
 	app.UseMiddleware<RequestLoggingMiddleware>();
+	app.UseMiddleware<ResponseLoggingMiddleware>();
 }
 else
 {

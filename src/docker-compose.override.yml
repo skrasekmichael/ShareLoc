@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  shareloc.server.app:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:7058;http://+:5113
+      - SHARELOC_DYNAMODB__SERVICEURL=http://dynamodb-local:8000
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

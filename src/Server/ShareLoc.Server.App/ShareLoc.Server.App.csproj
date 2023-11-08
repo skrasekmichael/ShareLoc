@@ -5,11 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <UserSecretsId>ad7ee626-d9dc-47ae-bcef-0d2375c8f889</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.2.692" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
@@ -20,6 +26,10 @@
 
   <ItemGroup>
     <Resource Include="Pages\*.liquid" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\GuessingPage.cs~RF4d085cc7.TMP" />
   </ItemGroup>
 
   <Target Name="EmbeddedPages" BeforeTargets="BeforeBuild">

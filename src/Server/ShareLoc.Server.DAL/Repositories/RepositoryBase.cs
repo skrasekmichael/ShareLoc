@@ -4,9 +4,9 @@ namespace ShareLoc.Server.DAL.Repositories;
 
 public abstract class RepositoryBase
 {
-	protected readonly DynamoDBContext _dbContext;
+	protected readonly IDynamoDBContext _dbContext;
 
-	public RepositoryBase(DynamoDBContext dbContext)
+	public RepositoryBase(IDynamoDBContext dbContext)
 	{
 		_dbContext = dbContext;
 	}

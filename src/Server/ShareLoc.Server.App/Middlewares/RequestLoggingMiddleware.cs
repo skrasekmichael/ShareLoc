@@ -13,7 +13,6 @@ public sealed class RequestLoggingMiddleware
 
 	public async Task Invoke(HttpContext context)
 	{
-
 		var cookies = "";
 		if (context.Request.Cookies.Count > 0)
 		{
@@ -23,7 +22,7 @@ public sealed class RequestLoggingMiddleware
 			}
 		}
 
-		_logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path} from {context.Connection.RemoteIpAddress} {cookies}");
+		_logger.LogInformation("Request: {method} {path} from {remoteHost} {cookies}", context.Request.Method, context.Request.Path, context.Connection.RemoteIpAddress, cookies);
 
 		await _next(context);
 	}

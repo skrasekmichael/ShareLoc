@@ -6,7 +6,7 @@ namespace ShareLoc.Server.DAL.Repositories;
 
 public sealed class PlaceRepository : RepositoryBase
 {
-	public PlaceRepository(DynamoDBContext dbContext) : base(dbContext) { }
+	public PlaceRepository(IDynamoDBContext dbContext) : base(dbContext) { }
 
 	public Task InsertPlaceAsync(Place place, CancellationToken token = default) =>
 		_dbContext.SaveAsync(place, token);
