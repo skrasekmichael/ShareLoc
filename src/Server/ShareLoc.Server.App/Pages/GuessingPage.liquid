@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css" />
+
+	<script src="script.js" defer></script>
+	<script src="https://api.mapy.cz/loader.js"></script>
+	<script>
+		Loader.lang = "en";
+		Loader.load();
+
+		const placeId = "{{ placeId }}";
+		{% if myGuessInfo %}
+		const myGuessInfo = {{ myGuessInfo }};
+		{% endif %}
+	</script>
+
+	<title>ShareLoc - guessing page</title>
+</head>
+<body>
+	<div id="input-name-dialog" onclick="toggleClass(this, 'visible')">
+		<form id="input-name-form" onclick="handled(event)">
+			Enter your name: <input type="text" name="name" id="input-name">
+			<div id="btn-change-name" class="btn">Apply</div>
+		</form>
+	</div>
+	<main id="main" class="guessing">
+		<section id="guessing">
+			<div id="map"></div>
+			<div id="image" onclick="toggleClass(this, 'full-screen')">
+				<div id="text"><div class="message">{{ text }}</div></div>
+				<img src="data:image/jpeg;base64, {{ base64Image }}" alt="Image" />
+			</div>
+			<div id="bottom-right-container">
+				<div id="guesser-name" onclick="changeNameDialog()"></div>
+				<div id="btn-guess" class="btn" onclick="locationGuessedAsync()">Take a guess</div>
+			</div>
+		</section>
+		<section id="guesses"></section>
+	</main>
+	<!--
+	<footer>
+		Copyright &copy; 2023 Michael Škrášek, Daniel Moudrý, Dalibor Beneš
+	</footer>
+	-->
+</body>
+</html>

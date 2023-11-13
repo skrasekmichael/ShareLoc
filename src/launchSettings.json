@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Server Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "shareloc.server.app": "StartDebugging"
+      }
+    }
+  }
+}

@@ -1,35 +1,41 @@
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
-
 using ShareLoc.Server.App.Endpoints;
 using ShareLoc.Server.App.Extensions;
-using ShareLoc.Server.DAL;
+using ShareLoc.Server.App.Middlewares;
+using ShareLoc.Server.App.Pages;
+using ShareLoc.Server.DAL.Extensions;
 using ShareLoc.Shared.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConfigurationManager config = builder.Configuration;
+builder.Configuration
+	.AddEnvironmentVariables(prefix: "SHARELOC_")
+	.Build();
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddCommon();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCommon();
 builder.Services.AddDAL();
-builder.Services.AddDBContext(config["ServiceURL"]!, config["AuthenticationRegion"]!);
+builder.Services.AddDBContext(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+	await app.Services.EnsureTablesCreatedAsync();
+
 	app.UseSwagger();
 	app.UseSwaggerUI();
+
+	app.UseMiddleware<RequestLoggingMiddleware>();
+	app.UseMiddleware<ResponseLoggingMiddleware>();
 }
 else
 {
-	app.UseExceptionHandler("/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
@@ -39,10 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
-app.MapRazorPages();
-
+app.MapPage<GuessingPage>();
 app.MapEndpoints<Endpoints>();
 
 app.Run();

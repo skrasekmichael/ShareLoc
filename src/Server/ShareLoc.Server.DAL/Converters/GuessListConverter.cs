@@ -23,7 +23,7 @@ public class GuessListConverter : IPropertyConverter
 	public DynamoDBEntry ToEntry(object value)
 	{
 		List<Guess>? guesses = value as List<Guess>;
-		if (guesses == null) throw new ArgumentNullException();
+		if (guesses is null) throw new ArgumentNullException();
 
 		string guessesJson = JsonConvert.SerializeObject(guesses);
 

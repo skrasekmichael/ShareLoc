@@ -1,0 +1,312 @@
+﻿:root {
+	--color-primary-vals: 255, 0, 81;
+	--color-primary-rgba: rgba(255, 0, 81, 0.65);
+	--color-secondary-vals: 29, 55, 70;
+	--color-secondary-rgba: rgba(29, 55, 70, 0.65);
+
+	/* --color-place-marker: rgba(0, 150, 10, 0.85); */
+	--color-place-marker: rgba(255, 0, 81, 0.85);
+	--color-guessing-marker: rgba(29, 55, 70, 0.8);
+	--color-marker: rgba(29, 55, 70, 0.8);
+}
+
+html {
+	font-family: "Inter", sans-serif;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	overflow: hidden;
+	height: 100%;
+	width: 100%;
+}
+
+main {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+
+	overflow: hidden;
+	position: relative;
+}
+
+main section {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+#image {
+	visibility: hidden;
+}
+
+main.guessing #image {
+	top: 8px;
+	right: 8px;
+	height: 30%;
+	max-width: 40%;
+	aspect-ratio: 1 / 1;
+
+	z-index: 2;
+	position: absolute;
+	display: flex;
+	cursor: pointer;
+	visibility: visible;
+
+	-webkit-user-select: none;
+	user-select: none;
+
+	background: white;
+	box-shadow: 0 0 20px black;
+
+	transition: 0.2s;
+}
+
+main.guesses #guessing {
+	height: 70%;
+}
+
+#image img {
+	margin: auto;
+	object-fit: cover;
+	height: 100%;
+	width: 100%;
+}
+
+main.guessing #image.full-screen {
+	top: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+
+	background: var(--color-secondary-rgba);
+
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+#image.full-screen img {
+	width: auto;
+	height: auto;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+#text {
+	position: absolute;
+	opacity: 0;
+	z-index: 2;
+	top: 0;
+	left: 0;
+}
+
+#text .message {
+	margin: 8px;
+	padding: 8px;
+
+	background: var(--color-secondary-rgba);
+	color: white;
+	border-radius: 5px;
+}
+
+#image.full-screen #text {
+	opacity: 1;
+}
+
+#map {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	margin: auto;
+}
+
+#bottom-right-container {
+	position: absolute;
+	z-index: 1;
+	
+	bottom: 8px;
+	right: 8px;
+
+	text-align: right;
+}
+
+#btn-guess {
+	visibility: hidden;
+	display: none;
+
+	padding: 8px;
+}
+
+main.guessing #btn-guess {
+	visibility: visible;
+	display: inline-block;
+}
+
+#guesser-name {
+	padding: 4px 6px;
+	margin-bottom: 4px;
+	margin-left: auto;
+	width: fit-content;
+
+	font-size: small;
+	font-weight: bold;
+	justify-content: center;
+
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-self: end;
+
+	background: var(--color-secondary-rgba);
+	color: white;
+	border-radius: 15px;
+
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+#guesser-name::after {
+	display: inline-block;
+	margin-top: 2px;
+	margin-left: 2px;
+	content: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" height="17" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9.65661 17L6.99975 17L6.99975 14M6.10235 14.8974L17.4107 3.58902C18.1918 2.80797 19.4581 2.80797 20.2392 3.58902C21.0202 4.37007 21.0202 5.6364 20.2392 6.41745L8.764 17.8926C8.22794 18.4287 7.95992 18.6967 7.6632 18.9271C7.39965 19.1318 7.11947 19.3142 6.8256 19.4723C6.49475 19.6503 6.14115 19.7868 5.43395 20.0599L3 20.9998L3.78312 18.6501C4.05039 17.8483 4.18403 17.4473 4.3699 17.0729C4.53497 16.7404 4.73054 16.424 4.95409 16.1276C5.20582 15.7939 5.50466 15.4951 6.10235 14.8974Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>');
+}
+
+.btn {
+	display: inline-block;
+	cursor: pointer;
+	padding: 8px;
+	border: none;
+	outline: none;
+
+	background: var(--color-primary-rgba);
+	color: white;
+
+	font-size: 17px;
+	border-radius: 5px;
+
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+.btn:hover, #guesser-name:hover {
+	opacity: 0.8;
+}
+
+.tooltip-box {
+	position: relative;
+	background: yellow;
+	margin-left: 11px;
+	margin-top: 30px;
+}
+
+.tooltip {
+	position: absolute;
+	bottom: 14px;
+	left: -70px;
+	width: 140px;
+	height: 40px;
+	line-height: 41px;
+
+	text-align: center;
+	background: var(--color-secondary-rgba);
+	color: white;
+	border-radius: 140px / 45px;
+
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+.tooltip-arrow {
+	position: absolute;
+	content: "";
+	top: -14px;
+	left: calc(50% - 9px);
+
+	width: 18px;
+	height: 14px;
+	background-color: var(--color-secondary-rgba);
+
+	clip-path: polygon(0 0, 100% 0, 50% 100%);
+
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+#guesses {
+	overflow-y: auto;
+	height: 30%;
+}
+
+.table {
+	display: grid;
+	grid-template-columns: repeat(3, auto);
+}
+
+.table div {
+	padding: 8px;
+	background: white;
+}
+
+.table > div:nth-child(6n + 4),
+.table > div:nth-child(6n + 5),
+.table > div:nth-child(6n + 6) {
+	background: rgb(240, 240, 240);
+}
+
+.table .head {
+	font-size: small;
+	font-weight: bold;
+	border-bottom: dashed var(--color-secondary-rgba) 1px;
+}
+
+.table div.guess {
+	background: var(--color-secondary-rgba);
+}
+
+#input-name-dialog {
+	position: absolute;
+	visibility: hidden;
+	opacity: 0;
+	z-index: 3;
+	width: 100%;
+	height: 100%;
+	display: flex;
+
+	background: var(--color-secondary-rgba);
+	transition: 0.2s;
+
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+}
+
+#input-name-dialog.visible {
+	opacity: 1;
+	visibility: visible;
+}
+
+#input-name-dialog form {
+	position: relative;
+	background: white;
+	max-width: 600px;
+	margin: auto;
+	box-shadow: 0 0 20px black;
+	padding: 36px;
+}
+
+#input-name-dialog form input[type="text"] {
+	padding: 8px;
+	margin-left: 8px;
+	background: rgb(230, 230, 230);
+	outline: none;
+	border: solid rgb(230, 230, 230) 2px;
+	border-bottom: solid var(--color-primary-rgba) 2px;
+}
