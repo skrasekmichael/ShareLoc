@@ -1,11 +1,12 @@
-﻿namespace ShareLoc.Client.App;
+﻿using ShareLoc.Client.App.Views.Pages;
 
-public partial class App : Application
+namespace ShareLoc.Client.App;
+
+public sealed partial class App : Application
 {
-	public App()
+	public App(MainMenuPage mainMenuPage)
 	{
 		InitializeComponent();
-
-		MainPage = new AppShell();
+		MainPage = new NavigationPage(mainMenuPage);
 	}
 }
