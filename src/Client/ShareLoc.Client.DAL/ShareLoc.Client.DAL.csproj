@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OneOf" Version="3.0.263" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Shared\ShareLoc.Shared.Common\ShareLoc.Shared.Common.csproj" />
   </ItemGroup>
 
