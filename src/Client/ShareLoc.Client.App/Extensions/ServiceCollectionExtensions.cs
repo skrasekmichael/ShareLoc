@@ -16,6 +16,9 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<MyGuessesPage, MyGuessesViewModel>();
 		services.AddScoped<PlaceDetailPage, PlaceDetailViewModel>();
 
+		services.AddTransient<CreatePlacePage>();
+		services.AddTransient<CreatePlaceViewModel>();
+
 		return services;
 	}
 

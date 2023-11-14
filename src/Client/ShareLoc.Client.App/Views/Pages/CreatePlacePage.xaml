@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:ShareLoc.Client.App.ViewModels"
+             x:DataType="viewModels:CreatePlaceViewModel"
+             x:Class="ShareLoc.Client.App.Views.Pages.CreatePlacePage"
+             Title="Create Place">
+    <VerticalStackLayout VerticalOptions="Center">
+        <Grid HorizontalOptions="FillAndExpand">
+            <Image
+                Source="{Binding Photo}"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="100"
+                Margin="20"
+                AbsoluteLayout.LayoutBounds="0, 0, 150, 150"
+                ZIndex="9999"
+            />
+            <WebView HeightRequest="300" AbsoluteLayout.LayoutBounds="0, 0, 300, 300" ZIndex="0">
+                <WebView.Source>
+                    <HtmlWebViewSource Html="{Binding MapHtml}">
+                    </HtmlWebViewSource>
+                </WebView.Source>
+            </WebView>
+        </Grid>
+        <Label
+            Text="Are you sure your location is correct?"
+            FontSize="Caption"
+            Margin="20"
+        />
+        <Entry Text="{Binding Message}"
+                Placeholder="Enter a message"
+                Margin="20"
+        />
+        <Button
+            Text="Share URL"
+            Margin="20"
+            Command="{Binding ShareUrlCommand}"
+        />
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -47,4 +47,5 @@ public sealed class NavigationService : INavigationService
 		viewModel.LoadAsynchronously();
 	}
 	public Page GetCurrentPage() => Navigation.NavigationStack.LastOrDefault() ?? throw new Exception("Could not get current page");
+	public Task ReturnToRootAsync(bool animated = true) => Navigation.PopToRootAsync(animated);
 }
