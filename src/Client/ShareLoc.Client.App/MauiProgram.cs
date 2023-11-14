@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Reflection;
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using ShareLoc.Client.App.Extensions;
@@ -14,8 +16,10 @@ public static class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
 
-		builder.Configuration
-			.AddJsonFile("appsettings.json");
+		var appSettingsStream = Assembly.GetExecutingAssembly()
+			.GetManifestResourceStream("AppSettings") ?? throw new ArgumentNullException();
+
+		builder.Configuration.AddJsonStream(appSettingsStream);
 
 		builder
 			.UseMauiApp<App>()
