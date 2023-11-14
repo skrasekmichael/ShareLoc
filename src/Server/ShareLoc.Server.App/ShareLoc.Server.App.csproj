@@ -28,10 +28,6 @@
     <Resource Include="Pages\*.liquid" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Pages\GuessingPage.cs~RF4d085cc7.TMP" />
-  </ItemGroup>
-
   <Target Name="EmbeddedPages" BeforeTargets="BeforeBuild">
     <ItemGroup>
       <Pages Include="Pages\*.liquid" />
