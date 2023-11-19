@@ -15,6 +15,8 @@ public static class ServiceCollectionExtensions
 			httpClient.BaseAddress = new Uri(serverOptions.Value.Address);
 		});
 
-		return serviceCollection;
+		return serviceCollection
+			.AddSingleton<EntityMapper>()
+			.AddScoped<LocalDbService>();
 	}
 }
