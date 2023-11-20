@@ -26,7 +26,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
 
     - name: Restore dependencies
       run: dotnet restore ${{ env.SERVER }}
@@ -45,13 +45,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
 
     - name: Install MAUI workload
       run: dotnet workload install maui
 
     - name: Build
-      run: dotnet build ${{ env.MAUI }} -c Release -f:net7.0-android
+      run: dotnet build ${{ env.MAUI }} -c Release -f:net8.0-android
 
   build_maui_ios:
     name: Build MAUI for IOS
@@ -64,10 +64,10 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
 
     - name: Install MAUI workload
       run: dotnet workload install maui
 
     - name: Build
-      run: dotnet build ${{ env.MAUI }} -c Release -f:net7.0-ios
+      run: dotnet build ${{ env.MAUI }} -c Release -f:net8.0-ios
