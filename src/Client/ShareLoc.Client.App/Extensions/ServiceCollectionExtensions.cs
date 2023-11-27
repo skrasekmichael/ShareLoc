@@ -1,6 +1,7 @@
 ﻿using ShareLoc.Client.App.Services;
 using ShareLoc.Client.App.ViewModels;
 using ShareLoc.Client.App.Views.Pages;
+using ShareLoc.Client.DAL;
 
 namespace ShareLoc.Client.App.Extensions;
 
@@ -22,8 +23,8 @@ public static class ServiceCollectionExtensions
 
 	public static IServiceCollection AddServices(this IServiceCollection services)
 	{
-		services.AddSingleton<INavigationService, NavigationService>();
-
-		return services;
+		return services
+			.AddSingleton<INavigationService, NavigationService>()
+			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>();
 	}
 }

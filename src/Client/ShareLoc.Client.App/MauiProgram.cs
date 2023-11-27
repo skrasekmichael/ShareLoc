@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using ShareLoc.Client.App.Extensions;
 using ShareLoc.Client.BL;
 using ShareLoc.Client.BL.Extensions;
+using ShareLoc.Client.DAL;
 using ShareLoc.Shared.Common;
 
 namespace ShareLoc.Client.App;
@@ -34,6 +36,7 @@ public static class MauiProgram
 
 		builder.Services
 			.AddCommon()
+			.AddDAL()
 			.AddBL()
 			.AddViewsAndViewModels()
 			.AddServices();
@@ -42,6 +45,12 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		return builder.Build();
+		var app = builder.Build();
+
+		using var scope = app.Services.CreateScope();
+		var dbContext = app.Services.GetRequiredService<ApplicationDbContext>();
+		dbContext.Database.Migrate();
+
+		return app;
 	}
 }
