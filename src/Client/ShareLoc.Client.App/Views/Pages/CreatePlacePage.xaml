@@ -8,15 +8,15 @@
     <VerticalStackLayout VerticalOptions="Center">
         <Grid HorizontalOptions="FillAndExpand">
             <Image
+                x:Name="photo"
                 Source="{Binding Photo}"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
-                WidthRequest="100"
+                WidthRequest="150"
                 Margin="20"
-                AbsoluteLayout.LayoutBounds="0, 0, 150, 150"
                 ZIndex="9999"
             />
-            <WebView HeightRequest="300" AbsoluteLayout.LayoutBounds="0, 0, 300, 300" ZIndex="0">
+            <WebView HeightRequest="300" AbsoluteLayout.LayoutBounds="0, 0, 300, 300" ZIndex="0" x:Name="map">
                 <WebView.Source>
                     <HtmlWebViewSource Html="{Binding MapHtml}">
                     </HtmlWebViewSource>
