@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
 	{
 		return services
 			.AddSingleton<INavigationService, NavigationService>()
-			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>();
+			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>()
+			.AddSingleton<IAlertService, AlertService>();
 	}
 }
