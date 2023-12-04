@@ -5,7 +5,8 @@ using ShareLoc.Client.App.Services;
 using ShareLoc.Client.BL.Services;
 using ShareLoc.Shared.Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Diagnostics;
+using ShareLoc.Client.App.Models;
+using ShareLoc.Client.DAL.Entities;
 
 namespace ShareLoc.Client.App.ViewModels;
 public sealed partial class CreatePlaceViewModel : BaseViewModel
@@ -16,50 +17,41 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 	private readonly LocalDbService _localDbService;
 
 	[ObservableProperty]
-	public ImageSource? photo;
+	private PlaceDetailViewModel _placeDetailViewModel;
 	[ObservableProperty]
-	public string mapHtml = "";
-	[ObservableProperty]
-	public string message = "Guess where I am!";
+	private string _message = string.Empty;
 
-	public Location? Location
-	{
-		get => _location;
-		set
-		{
-			_location = value;
-			MapHtml = GenerateHtml();
-		}
-	}
-	private Location? _location;
-	private byte[]? _photoBytes;
-	private PlaceRequest? _placeRequest;
-	private Guid? _localPlaceId;
+	private PlaceRequest? _placeRequest = null;
+	private byte[]? _photoBytes = null;
 
-	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService)
+	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService, PlaceDetailViewModel placeDetailViewModel)
 	{
 		_apiClient = apiClient;
 		_navigationService = navigationService;
 		_localDbService = localDbService;
 		_alertService = alertService;
+
+		PlaceDetailViewModel = placeDetailViewModel;
 	}
 
 	protected override async Task LoadAsync(CancellationToken ct)
 	{
+		Location? location = null;
+		ImageSource? photo = null;
 		await MainThread.InvokeOnMainThreadAsync(async () =>
 		{
-			Location = await GetLocation();
-			Photo = await TakePhoto();
+			location = await GetLocation();
+			photo = await TakePhoto();
 
 		});
 
-		if (Location is null)
+		if (location is null)
 		{
 			await _alertService.ShowAlertAsync("Error", "Location not found", "OK");
 			await _navigationService!.ReturnToRootAsync();
 			return;
 		}
-		if (Photo is null)
+		if (photo is null)
 		{
 			await _navigationService!.ReturnToRootAsync();
 			return;
@@ -68,21 +60,23 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		_placeRequest = new PlaceRequest()
 		{
 			Image = _photoBytes!,
-			Latitude = Location!.Latitude,
-			Longitude = Location!.Longitude,
-			Message = Message,
+			Latitude = location!.Latitude,
+			Longitude = location!.Longitude,
+			Message = PlaceDetailViewModel.Message!
 		};
 
-		_localPlaceId = await SavePlaceRequest();
-		if (_localPlaceId is null)
+		PlaceEntity? placeEntity = await SavePlaceRequest();
+		if (placeEntity is null)
 		{
 			await _alertService.ShowAlertAsync("Error", "Error while creating place", "OK");
 			await _navigationService!.ReturnToRootAsync();
 			return;
 		}
+
+		PlaceDetailViewModel.PlaceModel = new PlaceModel(placeEntity);
 	}
 
-	private async Task<Guid?> SavePlaceRequest()
+	private async Task<PlaceEntity?> SavePlaceRequest()
 	{
 		var response = await _localDbService.SavePlaceAsync(_placeRequest!);
 		if (!response.IsT0)
@@ -177,7 +171,7 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		response.Switch(
 			async (serverId) =>
 			{
-				await _localDbService.SharePlaceAsync(_localPlaceId!.Value, serverId, DateTime.UtcNow);
+				await _localDbService.SharePlaceAsync(PlaceDetailViewModel.PlaceModel!.LocalId, serverId, DateTime.UtcNow);
 				await Share.RequestAsync(new ShareTextRequest
 				{
 					// eg. a2934fa2-6f7e-4ac9-8210-681814ac86c4

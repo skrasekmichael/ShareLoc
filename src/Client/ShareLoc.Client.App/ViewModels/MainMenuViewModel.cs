@@ -5,13 +5,13 @@ using ShareLoc.Client.App.Views.Pages;
 
 namespace ShareLoc.Client.App.ViewModels;
 
-public sealed partial class MainMenuViewModel : BaseViewModel
+public sealed partial class MainMenuPageViewModel : BaseViewModel
 {
 	private readonly INavigationService _navigationService;
 
 	public string AppVersion => AppInfo.Current.VersionString;
 
-	public MainMenuViewModel(INavigationService navigationService)
+	public MainMenuPageViewModel(INavigationService navigationService)
 	{
 		_navigationService = navigationService;
 	}
@@ -20,7 +20,7 @@ public sealed partial class MainMenuViewModel : BaseViewModel
 	public Task GoToCreatePlacePage() => _navigationService.GoToAsync<CreatePlacePage, CreatePlaceViewModel>();
 
 	[RelayCommand]
-	public Task GoToMyPlacesPage() => _navigationService.GoToAsync<MyPlacesPage, MyPlacesViewModel>();
+	public Task GoToMyPlacesPage() => _navigationService.GoToAsync<MyPlacesPage, MyPlacesPageViewModel>();
 
 	[RelayCommand]
 	public Task GoToMyGuessesPage() => _navigationService.GoToAsync<MyGuessesPage, MyGuessesViewModel>();

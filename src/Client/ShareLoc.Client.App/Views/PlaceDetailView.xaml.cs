@@ -1,14 +1,11 @@
-using ShareLoc.Client.App.Services;
+namespace ShareLoc.Client.App.Views;
 
-namespace ShareLoc.Client.App.Views.Pages;
-
-public sealed partial class CreatePlacePage : ContentPage
+public partial class PlaceDetailView : ContentView
 {
-	public CreatePlacePage()
+	public PlaceDetailView()
 	{
 		InitializeComponent();
 
-		_navigationService = navigationService;
 		// Make Image expand to fill the whole screen on tap and collapse on tap again
 		var tapGestureRecognizer = new TapGestureRecognizer();
 		tapGestureRecognizer.Tapped += OnImageTapped!;
@@ -19,7 +16,7 @@ public sealed partial class CreatePlacePage : ContentPage
 	{
 		if (sender is not Image photo) return;
 
-		var windowWidth = _navigationService.GetCurrentPage().Width;
+		var windowWidth = Width;
 		var mapHeight = map.Height;
 		var scale = Math.Min(windowWidth / photo.Width, mapHeight / photo.Height);
 

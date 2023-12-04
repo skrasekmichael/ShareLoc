@@ -23,4 +23,10 @@ public sealed partial class PlaceModel : ObservableObject
 	public DateTime CreatedUTC => _placeEntity.CratedUTC;
 
 	public bool IsShared => _placeEntity.IsShared;
+
+	public double Latitude => _placeEntity.Latitude;
+
+	public double Longitude => _placeEntity.Longitude;
+
+	public string Message => _placeEntity.Message;
 }

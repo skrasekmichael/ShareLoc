@@ -18,12 +18,12 @@ public sealed class LocalDbService
 		_dbContext = dbContext;
 	}
 
-	public async Task<OneOf<Success<Guid>, NotFound, Error<string>>> SavePlaceAsync(PlaceRequest place, CancellationToken ct = default)
+	public async Task<OneOf<Success<PlaceEntity>, NotFound, Error<string>>> SavePlaceAsync(PlaceRequest place, CancellationToken ct = default)
 	{
 		try
 		{
 			Guid localId = Guid.NewGuid();
-			await _dbContext.Places.AddAsync(new()
+			PlaceEntity entity = new()
 			{
 				LocalId = localId,
 				CratedUTC = DateTime.UtcNow,
@@ -33,9 +33,11 @@ public sealed class LocalDbService
 				Message = place.Message,
 				ServerId = Guid.Empty,
 				SharedUTC = DateTime.MinValue
-			}, ct);
+			};
+
+			await _dbContext.Places.AddAsync(entity, ct);
 			await _dbContext.SaveChangesAsync(ct);
-			return new Success<Guid>(localId);
+			return new Success<PlaceEntity>(entity);
 		}
 		catch (Exception ex)
 		{
