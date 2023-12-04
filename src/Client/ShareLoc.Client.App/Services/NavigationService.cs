@@ -29,18 +29,22 @@ public sealed class NavigationService : INavigationService
 
 	public Task GoToAsync(Page page, bool animated = true) => Navigation.PushAsync(page, animated);
 
-	public Task GoToAsync<TPage, TViewModel>(TViewModel viewModel, bool animated = true) where TPage : Page where TViewModel : BaseViewModel
+	public async Task GoToAsync<TPage, TViewModel>(TViewModel viewModel, bool animated = true) where TPage : Page where TViewModel : BaseViewModel
 	{
 		var page = _serviceProvider.GetRequiredService<TPage>();
 		page.BindingContext = viewModel;
-		return Navigation.PushAsync(page, animated);
+
+		await Navigation.PushAsync(page, animated);
+		viewModel.LoadAsynchronously();
 	}
 
-	public Task GoToAsync<TPage, TViewModel>(bool animated = true) where TPage : Page where TViewModel : BaseViewModel
+	public async Task GoToAsync<TPage, TViewModel>(bool animated = true) where TPage : Page where TViewModel : BaseViewModel
 	{
-		var page = _serviceProvider.GetRequiredService<TPage>();
 		var viewModel = _serviceProvider.GetRequiredService<TViewModel>();
+		var page = _serviceProvider.GetRequiredService<TPage>();
 		page.BindingContext = viewModel;
-		return GoToAsync(page, animated);
+
+		await GoToAsync(page, animated);
+		viewModel.LoadAsynchronously();
 	}
 }

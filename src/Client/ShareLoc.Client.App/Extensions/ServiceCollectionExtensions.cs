@@ -1,4 +1,6 @@
-﻿using ShareLoc.Client.App.Services;
+﻿using CommunityToolkit.Maui;
+
+using ShareLoc.Client.App.Services;
 using ShareLoc.Client.App.ViewModels;
 using ShareLoc.Client.App.Views.Pages;
 using ShareLoc.Client.DAL;
@@ -9,14 +11,10 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddViewsAndViewModels(this IServiceCollection services)
 	{
-		services.AddTransient<MainMenuPage>();
-		services.AddTransient<MainMenuViewModel>();
-
-		services.AddTransient<MyPlacesPage>();
-		services.AddTransient<MyPlacesViewModel>();
-
-		services.AddTransient<MyGuessesPage>();
-		services.AddTransient<MyGuessesViewModel>();
+		services.AddScoped<MainMenuPage, MainMenuViewModel>();
+		services.AddScoped<MyPlacesPage, MyPlacesViewModel>();
+		services.AddScoped<MyGuessesPage, MyGuessesViewModel>();
+		services.AddScoped<PlaceDetailPage, PlaceDetailViewModel>();
 
 		return services;
 	}

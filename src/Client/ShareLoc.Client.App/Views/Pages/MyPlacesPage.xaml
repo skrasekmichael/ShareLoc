@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:ShareLoc.Client.App.ViewModels"
+             xmlns:models="clr-namespace:ShareLoc.Client.App.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="viewModels:MyPlacesViewModel"
              x:Class="ShareLoc.Client.App.Views.Pages.MyPlacesPage"
              Title="My Places">
-    <VerticalStackLayout>
-    </VerticalStackLayout>
+    <Grid>
+        <ActivityIndicator IsRunning="{Binding IsLoading}" Margin="40" WidthRequest="200" VerticalOptions="Start" />
+        <ScrollView>
+            <FlexLayout BindableLayout.ItemsSource="{Binding MyPlaces}"
+                        AlignContent="Start"
+                        HorizontalOptions="FillAndExpand"
+                        AlignItems="Start"
+                        Direction="Row"
+                        Wrap="Wrap">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:PlaceModel">
+                        <Grid HeightRequest="{Binding Source={RelativeSource Self}, Path=Width}"
+                              BackgroundColor="{StaticResource Secondary}"
+                              FlexLayout.Grow="1"
+                              FlexLayout.Shrink="1"
+                              FlexLayout.Basis="50%"
+                              MaximumHeightRequest="500"
+                              MaximumWidthRequest="500"
+                              Margin="1">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyPlacesViewModel}}, Path=TapPlaceCommand}"
+                                                      CommandParameter="{Binding}" />
+                            </Grid.GestureRecognizers>
+                            <Image Source="{Binding Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                                   Aspect="AspectFill">
+                            </Image>
+                            <Label Text="{Binding CreatedUTC}"
+                                   VerticalOptions="End"
+                                   HorizontalOptions="End"
+                                   Padding="4,1">
+                                <Label.Shadow>
+                                    <Shadow Brush="Black" Offset="0,0" Radius="10" Opacity="1"/>
+                                </Label.Shadow>
+                            </Label>
+                            <Image Source="share.svg"
+                                   IsVisible="{Binding IsShared}"
+                                   WidthRequest="30"
+                                   HeightRequest="30"
+                                   VerticalOptions="Start"
+                                   HorizontalOptions="End">
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                                </Image.Behaviors>
+                            </Image>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>
