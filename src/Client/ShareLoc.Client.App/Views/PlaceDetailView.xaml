@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:ShareLoc.Client.App.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="ShareLoc.Client.App.Views.PlaceDetailView"
+             x:DataType="viewModels:PlaceDetailViewModel">
+
+    <VerticalStackLayout VerticalOptions="Center">
+        <Grid HorizontalOptions="FillAndExpand">
+            <Image
+                x:Name="photo"
+                Source="{Binding Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                WidthRequest="150"
+                Margin="20"
+                ZIndex="9999"
+            />
+            <WebView x:Name="map" HeightRequest="300" AbsoluteLayout.LayoutBounds="0, 0, 300, 300" ZIndex="0">
+                <WebView.Source>
+                    <HtmlWebViewSource Html="{Binding MapHtml}" />
+                </WebView.Source>
+            </WebView>
+        </Grid>
+
+        <Label Text="{Binding Message}" Margin="20" IsVisible="{Binding IsShared}" />
+        <Entry Text="{Binding Message}" Margin="20" IsVisible="{Binding IsShared, Converter={toolkit:InvertedBoolConverter}}"/>
+
+    </VerticalStackLayout>
+</ContentView>

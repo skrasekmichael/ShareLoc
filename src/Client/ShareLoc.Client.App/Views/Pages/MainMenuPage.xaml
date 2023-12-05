@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:ShareLoc.Client.App.ViewModels"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:DataType="viewModels:MainMenuViewModel"
+             x:DataType="viewModels:MainMenuPageViewModel"
              x:Class="ShareLoc.Client.App.Views.Pages.MainMenuPage"
              Title="ShareLoc">
 
@@ -26,6 +26,7 @@
                 </Label.FormattedText>
             </Label>
         </VerticalStackLayout>
+        
     </VerticalStackLayout>
-
+    
 </ContentPage>

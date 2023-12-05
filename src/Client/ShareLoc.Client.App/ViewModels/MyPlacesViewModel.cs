@@ -8,7 +8,7 @@ using ShareLoc.Client.BL.Services;
 
 namespace ShareLoc.Client.App.ViewModels;
 
-public sealed partial class MyPlacesViewModel : BaseViewModel
+public sealed partial class MyPlacesPageViewModel : BaseViewModel
 {
 	private readonly LocalDbService _dbService;
 	private readonly INavigationService _navigationService;
@@ -17,7 +17,7 @@ public sealed partial class MyPlacesViewModel : BaseViewModel
 	[ObservableProperty]
 	private List<PlaceModel> _myPlaces = [];
 
-	public MyPlacesViewModel(INavigationService navigationService, LocalDbService dbService, PlaceDetailViewModel placeDetailViewModel)
+	public MyPlacesPageViewModel(INavigationService navigationService, LocalDbService dbService, PlaceDetailViewModel placeDetailViewModel)
 	{
 		_dbService = dbService;
 		_navigationService = navigationService;

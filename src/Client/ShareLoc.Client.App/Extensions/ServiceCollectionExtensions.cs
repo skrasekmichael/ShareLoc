@@ -2,6 +2,7 @@
 
 using ShareLoc.Client.App.Services;
 using ShareLoc.Client.App.ViewModels;
+using ShareLoc.Client.App.Views;
 using ShareLoc.Client.App.Views.Pages;
 using ShareLoc.Client.DAL;
 
@@ -11,13 +12,15 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddViewsAndViewModels(this IServiceCollection services)
 	{
-		services.AddScoped<MainMenuPage, MainMenuViewModel>();
-		services.AddScoped<MyPlacesPage, MyPlacesViewModel>();
+		services.AddScoped<MainMenuPage, MainMenuPageViewModel>();
+		services.AddScoped<MyPlacesPage, MyPlacesPageViewModel>();
 		services.AddScoped<MyGuessesPage, MyGuessesViewModel>();
-		services.AddScoped<PlaceDetailPage, PlaceDetailViewModel>();
+		services.AddScoped<PlaceDetailPage, PlaceDetailPageViewModel>();
+		services.AddScoped<PlaceDetailView, PlaceDetailViewModel>();
 
 		services.AddTransient<CreatePlacePage>();
 		services.AddTransient<CreatePlaceViewModel>();
+
 
 		return services;
 	}
