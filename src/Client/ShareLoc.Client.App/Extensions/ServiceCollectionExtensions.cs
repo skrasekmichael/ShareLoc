@@ -16,6 +16,9 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<MyGuessesPage, MyGuessesViewModel>();
 		services.AddScoped<PlaceDetailPage, PlaceDetailViewModel>();
 
+		services.AddTransient<CreatePlacePage>();
+		services.AddTransient<CreatePlaceViewModel>();
+
 		return services;
 	}
 
@@ -23,6 +26,7 @@ public static class ServiceCollectionExtensions
 	{
 		return services
 			.AddSingleton<INavigationService, NavigationService>()
-			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>();
+			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>()
+			.AddSingleton<IAlertService, AlertService>();
 	}
 }

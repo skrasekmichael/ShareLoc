@@ -17,11 +17,7 @@ public sealed partial class MainMenuViewModel : BaseViewModel
 	}
 
 	[RelayCommand]
-	public Task GoToCreatePlacePage()
-	{
-		//TODO
-		return Task.CompletedTask;
-	}
+	public Task GoToCreatePlacePage() => _navigationService.GoToAsync<CreatePlacePage, CreatePlaceViewModel>();
 
 	[RelayCommand]
 	public Task GoToMyPlacesPage() => _navigationService.GoToAsync<MyPlacesPage, MyPlacesViewModel>();
