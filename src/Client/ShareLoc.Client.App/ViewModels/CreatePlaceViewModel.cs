@@ -104,7 +104,7 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
                     }}
                         
                     function loadMap() {{
-	                    const center = SMap.Coords.fromWGS84('{Location!.Longitude.ToString()}', '{Location!.Latitude.ToString()}');
+	                    const center = SMap.Coords.fromWGS84('{_placeRequest!.Longitude}', '{_placeRequest.Latitude}');
 	                    map = new SMap(JAK.gel(""map""), center, 12);
 
 	                    map.addDefaultLayer(SMap.DEF_BASE).enable();
