@@ -20,11 +20,12 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 	private readonly IOptions<ServerOptions> _serverOptions;
 	private readonly ModelMapper _modelMapper;
 	private readonly IMediator _mediator;
+	private readonly ImageDownScaler _imgDownScaler;
 
 	[ObservableProperty]
 	private PlaceDetailViewModel _placeDetailViewModel;
 
-	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService, PlaceDetailViewModel placeDetailViewModel, IOptions<ServerOptions> serverOptions, ModelMapper modelMapper, IMediator mediator)
+	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService, PlaceDetailViewModel placeDetailViewModel, IOptions<ServerOptions> serverOptions, ModelMapper modelMapper, IMediator mediator, ImageDownScaler imgDownScaler)
 	{
 		_apiClient = apiClient;
 		_navigationService = navigationService;
@@ -32,9 +33,10 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		_alertService = alertService;
 		_serverOptions = serverOptions;
 		_modelMapper = modelMapper;
+		_mediator = mediator;
+		_imgDownScaler = imgDownScaler;
 
 		PlaceDetailViewModel = placeDetailViewModel;
-		_mediator = mediator;
 	}
 
 	protected override async Task LoadAsync(CancellationToken ct)
@@ -74,8 +76,7 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 			return null;
 
 		using var stream = await photo.OpenReadAsync();
-		var buffer = new byte[stream.Length];
-		await stream.ReadAsync(buffer.AsMemory(0, (int)stream.Length), ct);
+		var buffer = await _imgDownScaler.ScaleDownAsync(stream, ct);
 		return buffer;
 	}
 
