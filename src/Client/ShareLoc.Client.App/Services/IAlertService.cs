@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShareLoc.Client.App.Services;
+﻿namespace ShareLoc.Client.App.Services;
 
 public interface IAlertService
 {

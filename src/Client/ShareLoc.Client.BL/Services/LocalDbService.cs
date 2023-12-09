@@ -18,7 +18,7 @@ public sealed class LocalDbService
 		_dbContext = dbContext;
 	}
 
-	public async Task<OneOf<Success<PlaceEntity>, NotFound, Error<string>>> SavePlaceAsync(PlaceRequest place, CancellationToken ct = default)
+	public async Task<OneOf<Success<PlaceEntity>, Error<string>>> SavePlaceAsync(PlaceRequest place, CancellationToken ct = default)
 	{
 		try
 		{
@@ -89,6 +89,16 @@ public sealed class LocalDbService
 		catch (Exception ex)
 		{
 			return new Error<string>(ex.Message);
+		}
+	}
+
+	public async Task DeleteAsync(Guid placeId, CancellationToken ct = default)
+	{
+		var place = await _dbContext.Places.FindAsync(placeId, ct);
+		if (place is not null)
+		{
+			_dbContext.Places.Remove(place);
+			await _dbContext.SaveChangesAsync(ct);
 		}
 	}
 

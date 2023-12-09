@@ -26,13 +26,11 @@
                               MaximumHeightRequest="500"
                               MaximumWidthRequest="500"
                               Margin="1">
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyPlacesPageViewModel}}, Path=TapPlaceCommand}"
-                                                      CommandParameter="{Binding}" />
-                            </Grid.GestureRecognizers>
-                            <Image Source="{Binding Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
-                                   Aspect="AspectFill">
-                            </Image>
+                            <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyPlacesPageViewModel}}, Path=TapPlaceCommand}"
+                                         CommandParameter="{Binding}"
+                                         Source="{Binding Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                                         Aspect="AspectFill">
+                            </ImageButton>
                             <Label Text="{Binding CreatedUTC}"
                                    VerticalOptions="End"
                                    HorizontalOptions="End"

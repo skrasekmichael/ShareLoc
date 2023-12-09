@@ -30,4 +30,6 @@ public abstract partial class BaseViewModel : ObservableObject
 	protected Task Dispatch(Action action) => MainThread.InvokeOnMainThreadAsync(action);
 
 	protected Task Dispatch(Func<Task> asyncAction) => MainThread.InvokeOnMainThreadAsync(asyncAction);
+
+	protected Task<TResult> Dispatch<TResult>(Func<Task<TResult>> asyncAction) => MainThread.InvokeOnMainThreadAsync(asyncAction);
 }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Mvvm.Messaging;
 
 using ShareLoc.Client.App.Services;
 using ShareLoc.Client.App.ViewModels;
@@ -12,16 +13,15 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddViewsAndViewModels(this IServiceCollection services)
 	{
+		//pages
 		services.AddScoped<MainMenuPage, MainMenuPageViewModel>();
 		services.AddScoped<MyPlacesPage, MyPlacesPageViewModel>();
 		services.AddScoped<MyGuessesPage, MyGuessesViewModel>();
 		services.AddScoped<PlaceDetailPage, PlaceDetailPageViewModel>();
-		services.AddScoped<PlaceDetailView, PlaceDetailViewModel>();
+		services.AddTransient<CreatePlacePage, CreatePlaceViewModel>();
 
-		services.AddTransient<CreatePlacePage>();
-		services.AddTransient<CreatePlaceViewModel>();
-
-
+		//views
+		services.AddTransient<PlaceDetailView, PlaceDetailViewModel>();
 		return services;
 	}
 
@@ -30,6 +30,8 @@ public static class ServiceCollectionExtensions
 		return services
 			.AddSingleton<INavigationService, NavigationService>()
 			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>()
-			.AddSingleton<IAlertService, AlertService>();
+			.AddSingleton<IAlertService, AlertService>()
+			.AddSingleton<ModelMapper>()
+			.AddSingleton<IMediator>(new Mediator(WeakReferenceMessenger.Default));
 	}
 }
