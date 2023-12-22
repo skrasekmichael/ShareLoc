@@ -2,30 +2,95 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:ShareLoc.Client.App.ViewModels"
+             xmlns:views="clr-namespace:ShareLoc.Client.App.Views"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="ShareLoc.Client.App.Views.PlaceDetailView"
              x:DataType="viewModels:PlaceDetailViewModel">
 
-    <VerticalStackLayout VerticalOptions="Center">
-        <Grid HorizontalOptions="FillAndExpand">
-            <Image
-                x:Name="photo"
-                Source="{Binding Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
-                HorizontalOptions="Start"
-                VerticalOptions="Start"
-                WidthRequest="150"
-                Margin="20"
-                ZIndex="9999"
-            />
-            <WebView x:Name="map" HeightRequest="300" AbsoluteLayout.LayoutBounds="0, 0, 300, 300" ZIndex="0">
+    <AbsoluteLayout VerticalOptions="FillAndExpand">
+        <HorizontalStackLayout ZIndex="1">
+            <HorizontalStackLayout.Triggers>
+                <DataTrigger TargetType="HorizontalStackLayout" Binding="{Binding IsEnlarged}" Value="False">
+                    <Setter Property="AbsoluteLayout.LayoutBounds" Value="0,0,150,150"/>
+                    <Setter Property="AbsoluteLayout.LayoutFlags" Value="None" />
+                </DataTrigger>
+                <DataTrigger TargetType="HorizontalStackLayout" Binding="{Binding IsEnlarged}" Value="True">
+                    <Setter Property="AbsoluteLayout.LayoutBounds" Value="0,0,1,1" />
+                    <Setter Property="AbsoluteLayout.LayoutFlags" Value="SizeProportional" />
+                </DataTrigger>
+            </HorizontalStackLayout.Triggers>
+
+            <AbsoluteLayout ZIndex="2"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            Background="{StaticResource Secondary}">
+                <Image Source="{Binding Model.Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                       IsVisible="{Binding IsEnlarged}"
+                       AbsoluteLayout.LayoutFlags="All"
+                       AbsoluteLayout.LayoutBounds="0,0,1,1"
+                       Aspect="AspectFill"
+                       Opacity="0.3" />
+                <ActivityIndicator IsRunning="{Binding Model, Converter={toolkit:IsNullConverter}}"
+                                   AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5"
+                                   AbsoluteLayout.LayoutFlags="All" />
+                <ImageButton Source="{Binding Model.Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
+                             Command="{Binding TapImageCommand}">
+                    <ImageButton.Triggers>
+                        <DataTrigger TargetType="ImageButton" Binding="{Binding IsEnlarged}" Value="False">
+                            <Setter Property="WidthRequest" Value="150"/>
+                            <Setter Property="HeightRequest" Value="150"/>
+                            <Setter Property="Aspect" Value="AspectFill" />
+                        </DataTrigger>
+                        <DataTrigger TargetType="ImageButton" Binding="{Binding IsEnlarged}" Value="True">
+                            <Setter Property="WidthRequest" Value="{Binding Width, Source={RelativeSource AncestorType={x:Type views:PlaceDetailView}}}" />
+                            <Setter Property="HeightRequest" Value="{Binding Height, Source={RelativeSource AncestorType={x:Type views:PlaceDetailView}}}" />
+                            <Setter Property="Aspect" Value="AspectFit" />
+                        </DataTrigger>
+                    </ImageButton.Triggers>
+                </ImageButton>
+            </AbsoluteLayout>
+
+            <Grid HeightRequest="80" RowSpacing="8" Margin="8" VerticalOptions="Start">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <HorizontalStackLayout Grid.Row="0">
+                    <Label Text="Latitude: " VerticalOptions="Center" />
+                    <Grid>
+                        <ActivityIndicator IsRunning="{Binding Model, Converter={toolkit:IsNullConverter}}" HorizontalOptions="Start" />
+                        <Label Text="{Binding Model.Latitude}" VerticalOptions="Center" />
+                    </Grid>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Row="1">
+                    <Label Text="Longitude: " VerticalOptions="Center" />
+                    <Grid>
+                        <ActivityIndicator IsRunning="{Binding Model, Converter={toolkit:IsNullConverter}}" HorizontalOptions="Start" />
+                        <Label Text="{Binding Model.Longitude}" VerticalOptions="Center" />
+                    </Grid>
+                </HorizontalStackLayout>
+            </Grid>
+        </HorizontalStackLayout>
+
+        <Grid AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.8" ZIndex="-1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <WebView Grid.Row="0">
                 <WebView.Source>
                     <HtmlWebViewSource Html="{Binding MapHtml}" />
                 </WebView.Source>
             </WebView>
+
+            <Grid Grid.Row="1" Margin="8">
+                <Label Text="{Binding Model.Message}" IsVisible="{Binding Model.IsShared}" />
+                <Entry Text="{Binding Model.Message}" IsVisible="{Binding Model.IsShared, Converter={toolkit:InvertedBoolConverter}}"/>
+            </Grid>
         </Grid>
+    </AbsoluteLayout>
 
-        <Label Text="{Binding Message}" Margin="20" IsVisible="{Binding IsShared}" />
-        <Entry Text="{Binding Message}" Margin="20" IsVisible="{Binding IsShared, Converter={toolkit:InvertedBoolConverter}}"/>
-
-    </VerticalStackLayout>
 </ContentView>

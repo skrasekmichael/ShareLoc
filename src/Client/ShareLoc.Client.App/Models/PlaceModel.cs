@@ -1,32 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using ShareLoc.Client.DAL.Entities;
-
 namespace ShareLoc.Client.App.Models;
 
 public sealed partial class PlaceModel : ObservableObject
 {
-	private readonly PlaceEntity _placeEntity;
+	public Guid LocalId { get; set; }
 
-	public PlaceModel(PlaceEntity placeEntity)
-	{
-		_placeEntity = placeEntity;
-	}
+	public Guid ServerId { get; set; }
+	public double Latitude { get; set; }
+	public double Longitude { get; set; }
+	public byte[] Image { get; set; } = [];
+	public string Message { get; set; } = "Guess Where I am!";
+	public DateTime CreatedUTC { get; set; }
+	public DateTime SharedUTC { get; set; }
 
-	public Guid LocalId => _placeEntity.LocalId;
-
-	public byte[] Image => _placeEntity.Image;
-
-	[ObservableProperty]
-	private bool _isSelected = false;
-
-	public DateTime CreatedUTC => _placeEntity.CratedUTC;
-
-	public bool IsShared => _placeEntity.IsShared;
-
-	public double Latitude => _placeEntity.Latitude;
-
-	public double Longitude => _placeEntity.Longitude;
-
-	public string Message => _placeEntity.Message;
+	public bool IsShared => ServerId != Guid.Empty;
 }
