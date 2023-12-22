@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
 
 		return serviceCollection
 			.AddSingleton<EntityMapper>()
+			.AddSingleton(new ImageDownScaler(400 * 1024, [1.0, 0.5, 0.25, 0.18]))
 			.AddScoped<LocalDbService>();
 	}
 }
