@@ -48,7 +48,7 @@
 
   <ItemGroup>
     <PackageReference Include="AsyncAwaitBestPractices" Version="7.0.0" />
-    <PackageReference Include="CommunityToolkit.Maui" Version="7.0.0" />
+    <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
@@ -56,11 +56,18 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="NReco.Logging.File" Version="1.1.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ShareLoc.Client.BL\ShareLoc.Client.BL.csproj" />
     <ProjectReference Include="..\ShareLoc.Client.DAL\ShareLoc.Client.DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\Pages\GuessingPage.xaml.cs">
+      <DependentUpon>GuessingPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

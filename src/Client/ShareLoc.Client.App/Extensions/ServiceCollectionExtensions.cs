@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<MyGuessesPage, MyGuessesViewModel>();
 		services.AddScoped<PlaceDetailPage, PlaceDetailPageViewModel>();
 		services.AddTransient<CreatePlacePage, CreatePlaceViewModel>();
+		services.AddTransient<GuessingPage, GuessingPageViewModel>();
 
 		//views
 		services.AddTransient<PlaceDetailView, PlaceDetailViewModel>();
@@ -32,6 +33,8 @@ public static class ServiceCollectionExtensions
 			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>()
 			.AddSingleton<IAlertService, AlertService>()
 			.AddSingleton<ModelMapper>()
+			.AddSingleton<ProfileWrapper>()
+			.AddSingleton<OnStartUpService>()
 			.AddSingleton<IMediator>(new Mediator(WeakReferenceMessenger.Default));
 	}
 }

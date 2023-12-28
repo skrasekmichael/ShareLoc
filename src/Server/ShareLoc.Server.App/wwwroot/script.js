@@ -1,4 +1,9 @@
-window.onload = async function() {
+var applicationAccess = false;
+
+window.onload = async function () {
+	applicationAccess = localStorage.getItem("appAccess") == "TRUE";
+
+	loadRedirectButton();
 	loadMap();
 
 	myId = getCookie("guesserId");
@@ -13,6 +18,41 @@ window.onload = async function() {
 		const guessCoords = SMap.Coords.fromWGS84(myGuessInfo.guessLongitude, myGuessInfo.guessLatitude);
 		mapDisplayGuessResult(correctCoords, guessCoords);
 	}
+}
+
+function loadRedirectButton() {
+	if (applicationAccess === true) {
+		return;
+	}
+
+	const ref = document.createElement("a");
+	ref.innerHTML = "Open in application";
+	ref.className = "btn";
+	ref.addEventListener("click", redirectToMobileApp);
+
+	const segment = document.getElementById("redirect");
+	segment.appendChild(ref);
+}
+
+function redirectToMobileApp() {
+	if (applicationAccess === true) {
+		return;
+	}
+
+	const appURL = window.location.href.replace(/^https:/, "app-shareloc:");
+
+	const iframe = document.createElement("iframe");
+	iframe.style.display = "none";
+	iframe.src = appURL;
+	document.body.appendChild(iframe);
+
+	const redirectTimer = setTimeout(function () {
+		document.body.removeChild(iframe);
+	}, 300);
+
+	window.onblur = function () {
+		clearTimeout(redirectTimer);
+	};
 }
 
 function getCookie(name) {

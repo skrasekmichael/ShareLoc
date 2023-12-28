@@ -1,0 +1,8 @@
+{
+    "related_applications": [
+        {
+            "platform": "play",
+            "id": "com.companyname.shareloc.client.app"
+        }
+    ]
+}
