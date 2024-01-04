@@ -13,4 +13,6 @@ public sealed partial class ModelMapper
 	public partial PlaceModel Map(PlaceEntity placeEntity);
 
 	public partial PlaceRequest Map(PlaceModel placeModel);
+
+	public partial GuessModel Map(GuessResponse guessResponse);
 }

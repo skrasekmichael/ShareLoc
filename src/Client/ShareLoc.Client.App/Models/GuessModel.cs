@@ -1,6 +1,8 @@
-﻿namespace ShareLoc.Shared.Common.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public sealed class GuessResponse
+namespace ShareLoc.Client.App.Models;
+
+public sealed partial class GuessModel : ObservableObject
 {
 	public required Guid GuesserId { get; init; }
 	public required double Latitude { get; init; }
@@ -8,4 +10,7 @@ public sealed class GuessResponse
 	public required string Name { get; init; }
 	public required int Score { get; init; }
 	public required double Distance { get; init; }
+
+	[ObservableProperty]
+	private bool _isSelected;
 }

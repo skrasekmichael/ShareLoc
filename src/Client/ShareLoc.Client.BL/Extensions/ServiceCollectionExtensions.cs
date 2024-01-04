@@ -9,11 +9,24 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddBL(this IServiceCollection serviceCollection)
 	{
-		serviceCollection.AddHttpClient<ApiClient>("ServerHttpClient", (serviceProvider, httpClient) =>
-		{
-			var serverOptions = serviceProvider.GetRequiredService<IOptions<ServerOptions>>();
-			httpClient.BaseAddress = new Uri(serverOptions.Value.Address);
-		});
+		serviceCollection.AddHttpClient<ApiClient>("ServerHttpClient")
+#if DEBUG
+			.ConfigurePrimaryHttpMessageHandler(() =>
+			{
+				var handler = new HttpClientHandler
+				{
+					// Ignore SSL certificate validation errors
+					ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+				};
+
+				return handler;
+			})
+#endif
+			.ConfigureHttpClient((serviceProvider, httpClient) =>
+			{
+				var serverOptions = serviceProvider.GetRequiredService<IOptions<ServerOptions>>();
+				httpClient.BaseAddress = new Uri(serverOptions.Value.Address);
+			});
 
 		return serviceCollection
 			.AddSingleton<EntityMapper>()

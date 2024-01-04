@@ -60,8 +60,9 @@ public sealed class Endpoints : IEndpoints
 			if (guesses is null)
 				return Results.NotFound();
 
-			return Results.Ok(guesses.Select(guess => new GuessResponse()
+			return Results.Ok(guesses.Select(guess => new GuessResponse
 			{
+				GuesserId = guess.GuesserId,
 				Distance = guess.Distance,
 				Latitude = guess.Latitude,
 				Longitude = guess.Longitude,

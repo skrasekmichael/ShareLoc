@@ -34,6 +34,16 @@ public sealed partial class MyPlacesPageViewModel : BaseViewModel
 			var deletedPlace = recipient.MyPlaces.First(place => place.LocalId == message.PlaceId);
 			recipient.MyPlaces.Remove(deletedPlace);
 		});
+		mediator.Subscribe<MyPlacesPageViewModel, PlaceSharingStateChangedMessage>(this, (recipient, message) =>
+		{
+			var place = recipient.MyPlaces.First(place => place.LocalId == message.PlaceId);
+			place.ServerId = message.ServerId;
+		});
+		mediator.Subscribe<MyPlacesPageViewModel, PlaceMessageUpdatedMessage>(this, (recipient, message) =>
+		{
+			var place = recipient.MyPlaces.First(place => place.LocalId == message.PlaceId);
+			place.Message = message.Message;
+		});
 	}
 
 	protected override async Task LoadAsync(CancellationToken ct)
@@ -49,6 +59,7 @@ public sealed partial class MyPlacesPageViewModel : BaseViewModel
 	private Task TapPlace(PlaceModel place)
 	{
 		_placeDetailViewModel.PlaceModel = place;
+		_placeDetailViewModel.LoadAsynchronously(true);
 		return _navigationService.GoToAsync<PlaceDetailPage, PlaceDetailPageViewModel>(_placeDetailViewModel);
 	}
 }

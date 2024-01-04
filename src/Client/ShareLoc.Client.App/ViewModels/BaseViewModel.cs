@@ -13,7 +13,7 @@ public abstract partial class BaseViewModel : ObservableObject
 
 	public void LoadAsynchronously(bool forceLoad = false, CancellationToken ct = default)
 	{
-		if (!IsLoaded || forceLoad)
+		if (!IsLoading && (!IsLoaded || forceLoad))
 		{
 			IsLoading = true;
 			Task.Run(async () =>
