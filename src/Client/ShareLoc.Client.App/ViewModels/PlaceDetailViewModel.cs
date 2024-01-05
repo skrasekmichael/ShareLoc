@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using ShareLoc.Client.App.Models;
+using ShareLoc.Shared.Common.Models;
 
 namespace ShareLoc.Client.App.ViewModels;
 
@@ -19,12 +20,12 @@ public sealed partial class PlaceDetailViewModel : BaseViewModel
 			if (value is null)
 				return;
 
-			MapHtml = GenerateHtml(value.Longitude, value.Latitude);
+			Dispatch(() => MapWebView.Source = new HtmlWebViewSource
+			{
+				Html = GenerateHtml(value.Longitude, value.Latitude, value.LocalId == Guid.Empty)
+			});
 		}
 	}
-
-	[ObservableProperty]
-	private string? _mapHtml = string.Empty;
 
 	[ObservableProperty]
 	private bool _isEnlarged = false;
@@ -32,7 +33,19 @@ public sealed partial class PlaceDetailViewModel : BaseViewModel
 	[RelayCommand]
 	private void TapImage() => IsEnlarged = !IsEnlarged;
 
-	private static string GenerateHtml(double longitude, double latitude) => $$"""
+	public WebView MapWebView { get; } = new();
+
+	public async Task ShowGuessAsync(GuessModel guess)
+	{
+		await MapWebView.EvaluateJavaScriptAsync($$"""mapDisplayGuessResult('{{guess.Longitude}}', '{{guess.Latitude}}');""");
+	}
+
+	public async Task HideGuessAsync()
+	{
+		await MapWebView.EvaluateJavaScriptAsync("showLocation();");
+	}
+
+	private static string GenerateHtml(double longitude, double latitude, bool moveable) => $$$"""
 			<![CDATA[
 			<html>
 				<script src="https://api.mapy.cz/loader.js"></script>
@@ -52,30 +65,83 @@ public sealed partial class PlaceDetailViewModel : BaseViewModel
 					}
 
 					function loadMap() {
-						const center = SMap.Coords.fromWGS84('{{longitude}}', '{{latitude}}');
-						map = new SMap(JAK.gel("map"), center, 12);
+						correctCoords = SMap.Coords.fromWGS84('{{{longitude}}}', '{{{latitude}}}');
+						map = new SMap(JAK.gel("map"), correctCoords, 12);
 
 						map.addDefaultLayer(SMap.DEF_BASE).enable();
-						map.addDefaultControls();
+						{{{(moveable ? "map.addDefaultControls();" : "")}}}
 
 						const sync = new SMap.Control.Sync();
 						map.addControl(sync);
 
-						targetLayer = new SMap.Layer.HUD();
+						targetLayer = new SMap.Layer.Marker();
 						map.addLayer(targetLayer);
 						targetLayer.enable();
 
 						markersLayer = new SMap.Layer.Marker();
 						map.addLayer(markersLayer);
 						markersLayer.enable();
+
+						geometryLayer = new SMap.Layer.Geometry();
+						map.addLayer(geometryLayer);
+						geometryLayer.enable();
 		
-						const placeMarker = getMarker(center, "#ff0051");
-						markersLayer.addMarker(placeMarker);
+						const placeMarker = getMarker(correctCoords, "#ff0051");
+						targetLayer.addMarker(placeMarker);
+					}
+
+					function showLocation() {
+						markersLayer.removeAll();
+						geometryLayer.removeAll();
+						map.setCenterZoom(correctCoords, 12, true);
+					}
+
+					function mapDisplayGuessResult(long, lat) {
+						const guessCoords = SMap.Coords.fromWGS84(long, lat);
+
+						markersLayer.removeAll();
+						geometryLayer.removeAll();
+						map.syncPort();
+
+						const guessMarker = getMarker(guessCoords, "#1d3746");
+						markersLayer.addMarker(guessMarker);
+
+						const [centerCoords, zoom] = map.computeCenterZoom([guessCoords, correctCoords], false);
+						const distance = guessCoords.distance(correctCoords);
+
+						const points = calculateCurvePoints(guessCoords, centerCoords, correctCoords, distance);
+						const line = new SMap.Geometry(SMap.GEOMETRY_POLYLINE, null, points, {
+							color: "black",
+							width: 2,
+							style: 1
+						});
+
+						geometryLayer.addGeometry(line);
+
+						map.setCenterZoom(centerCoords, zoom, true);
+					}
+
+					function calculateCurvePoints(startPoint, middlePoint, endPoint, distance) {
+						const numPoints = Math.ceil(distance / 20000);
+						const curvePoints = [];
+
+						for (let i = 0; i <= numPoints; i++) {
+							const t = i / numPoints;
+							const x = interpolate(startPoint.x, middlePoint.x, endPoint.x, t);
+							const y = interpolate(startPoint.y, middlePoint.y, endPoint.y, t);
+							curvePoints.push(new SMap.Coords(x, y));
+						}
+
+						return curvePoints;
+					}
+
+					function interpolate(start, middle, end, t) {
+						return (1 - t) * (1 - t) * start + 2 * (1 - t) * t * middle + t * t * end;
 					}
 
 					Loader.lang = "en";
 					Loader.load();
-						
+
 					window.onload = async function() { loadMap(); };
 				</script>
 				<body style="margin: 0">

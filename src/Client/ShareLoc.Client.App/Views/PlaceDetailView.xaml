@@ -80,11 +80,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <WebView Grid.Row="0">
-                <WebView.Source>
-                    <HtmlWebViewSource Html="{Binding MapHtml}" />
-                </WebView.Source>
-            </WebView>
+            <ContentView Grid.Row="0" Content="{Binding MapWebView}" />
 
             <Grid Grid.Row="1" Margin="8">
                 <Label Text="{Binding Model.Message}" IsVisible="{Binding Model.IsShared}" />

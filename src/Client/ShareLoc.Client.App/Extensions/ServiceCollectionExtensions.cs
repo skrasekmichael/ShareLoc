@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
 			.AddSingleton<ILocalDbConfigurationService, LocalDbConfigurationService>()
 			.AddSingleton<IAlertService, AlertService>()
 			.AddSingleton<ModelMapper>()
-			.AddSingleton<IMediator>(new Mediator(WeakReferenceMessenger.Default));
+			.AddSingleton<IMediator>(new Mediator(WeakReferenceMessenger.Default))
+			.AddSingleton<PlaceSharingService>();
 	}
 }

@@ -35,7 +35,7 @@ public sealed class LocalDbService
 				SharedUTC = DateTime.MinValue
 			};
 
-			await _dbContext.Places.AddAsync(entity, ct);
+			_dbContext.Places.Add(entity);
 			await _dbContext.SaveChangesAsync(ct);
 			return new Success<PlaceEntity>(entity);
 		}
@@ -47,7 +47,7 @@ public sealed class LocalDbService
 
 	public async Task<OneOf<Success, NotFound, Error<string>>> SharePlaceAsync(Guid localPlaceId, Guid serverPlaceId, DateTime sharedUTC, CancellationToken ct = default)
 	{
-		var place = await _dbContext.Places.FindAsync([localPlaceId], cancellationToken: ct);
+		var place = await _dbContext.Places.FindAsync([localPlaceId], ct);
 
 		if (place is null)
 			return new NotFound();
@@ -71,7 +71,7 @@ public sealed class LocalDbService
 
 	public async Task<OneOf<Success, NotFound, Error<string>>> UpdateMessageAsync(Guid localPlaceId, string message, CancellationToken ct = default)
 	{
-		var place = await _dbContext.Places.FindAsync([localPlaceId], cancellationToken: ct);
+		var place = await _dbContext.Places.FindAsync([localPlaceId], ct);
 
 		if (place is null)
 			return new NotFound();
@@ -94,7 +94,7 @@ public sealed class LocalDbService
 
 	public async Task DeleteAsync(Guid placeId, CancellationToken ct = default)
 	{
-		var place = await _dbContext.Places.FindAsync(placeId, ct);
+		var place = await _dbContext.Places.FindAsync([placeId], ct);
 		if (place is not null)
 		{
 			_dbContext.Places.Remove(place);
@@ -102,6 +102,16 @@ public sealed class LocalDbService
 		}
 	}
 
+	public async Task RemoveServerIdAsync(Guid placeId, CancellationToken ct = default)
+	{
+		var place = await _dbContext.Places.FindAsync([placeId], ct);
+		if (place is not null)
+		{
+			place.ServerId = Guid.Empty;
+			await _dbContext.SaveChangesAsync(ct);
+		}
+	}
+
 	public Task<List<PlaceEntity>> GetPlacesAsync(CancellationToken ct = default) =>
-		_dbContext.Places.Include(place => place.Guesses).ToListAsync(ct);
+		_dbContext.Places.Include(place => place.Guesses).AsNoTracking().ToListAsync(ct);
 }

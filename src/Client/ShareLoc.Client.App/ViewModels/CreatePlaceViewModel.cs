@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Microsoft.Extensions.Options;
-
 using ShareLoc.Client.App.Messages;
 using ShareLoc.Client.App.Models;
 using ShareLoc.Client.App.Services;
-using ShareLoc.Client.BL;
 using ShareLoc.Client.BL.Services;
 
 namespace ShareLoc.Client.App.ViewModels;
@@ -17,24 +14,24 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 	private readonly IAlertService _alertService;
 	private readonly ApiClient _apiClient;
 	private readonly LocalDbService _localDbService;
-	private readonly IOptions<ServerOptions> _serverOptions;
 	private readonly ModelMapper _modelMapper;
 	private readonly IMediator _mediator;
 	private readonly ImageDownScaler _imgDownScaler;
+	private readonly PlaceSharingService _sharePlaceService;
 
 	[ObservableProperty]
 	private PlaceDetailViewModel _placeDetailViewModel;
 
-	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService, PlaceDetailViewModel placeDetailViewModel, IOptions<ServerOptions> serverOptions, ModelMapper modelMapper, IMediator mediator, ImageDownScaler imgDownScaler)
+	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService, PlaceDetailViewModel placeDetailViewModel, ModelMapper modelMapper, IMediator mediator, ImageDownScaler imgDownScaler, PlaceSharingService sharePlaceService)
 	{
 		_apiClient = apiClient;
 		_navigationService = navigationService;
 		_localDbService = localDbService;
 		_alertService = alertService;
-		_serverOptions = serverOptions;
 		_modelMapper = modelMapper;
 		_mediator = mediator;
 		_imgDownScaler = imgDownScaler;
+		_sharePlaceService = sharePlaceService;
 
 		PlaceDetailViewModel = placeDetailViewModel;
 	}
@@ -133,17 +130,24 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		if (PlaceDetailViewModel.Model is null)
 			return;
 
+		var entityResult = await _localDbService.SavePlaceAsync(_modelMapper.Map(PlaceDetailViewModel.Model), ct);
+
+		entityResult.Switch(
+			entity =>
+			{
+				PlaceDetailViewModel.Model.LocalId = entity.Value.LocalId;
+				_mediator.Publish(new PlaceStoredMessage(PlaceDetailViewModel.Model));
+			},
+			async error => await _alertService.ShowAlertAsync("Error", $"Failed to save Place", "OK")
+		);
+
 		var response = await _apiClient.CreatePlaceAsync(_modelMapper.Map(PlaceDetailViewModel.Model), ct);
 
 		response.Switch(
 			async (serverId) =>
 			{
 				await _localDbService.SharePlaceAsync(PlaceDetailViewModel.Model.LocalId, serverId, DateTime.UtcNow);
-				await Share.RequestAsync(new ShareTextRequest
-				{
-					Text = $"{_serverOptions.Value.Address}/{serverId}",
-					Title = PlaceDetailViewModel.Model.Message
-				});
+				await _sharePlaceService.SharePlaceUrlAsync(PlaceDetailViewModel.Model);
 				await _navigationService.GoToHomeAsync();
 			},
 			async validationErrors => await _alertService.ShowAlertAsync("Error", $"Invalid values given: {validationErrors}", "OK"),

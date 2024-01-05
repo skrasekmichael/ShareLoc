@@ -4,7 +4,9 @@
              xmlns:viewModels="clr-namespace:ShareLoc.Client.App.ViewModels"
              xmlns:models="clr-namespace:ShareLoc.Client.App.Models"
              xmlns:views="clr-namespace:ShareLoc.Client.App.Views"
+             xmlns:pages="clr-namespace:ShareLoc.Client.App.Views.Pages"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:ShareLoc.Client.App.Converters"
              x:DataType="viewModels:PlaceDetailPageViewModel"
              x:Class="ShareLoc.Client.App.Views.Pages.PlaceDetailPage"
              Title="Place Detail">
@@ -14,16 +16,69 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <views:PlaceDetailView Grid.Row="0" BindingContext="{Binding PlaceDetailViewModel}" />
+        <RefreshView IsRefreshing="{Binding IsLoading, Mode=OneWay}"
+                     Command="{Binding RefreshCommand}"
+                     RefreshColor="{StaticResource Secondary}">
+            <ScrollView>
+                <VerticalStackLayout>
+                    <Grid>
+                        <Grid.Triggers>
+                            <DataTrigger TargetType="Grid" Binding="{Binding PlaceModel.IsShared}" Value="False">
+                                <Setter Property="HeightRequest" Value="{Binding Height, Source={RelativeSource AncestorType={x:Type RefreshView}}}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Grid" Binding="{Binding PlaceModel.IsShared}" Value="True">
+                                <Setter Property="HeightRequest" Value="{Binding Height, Source={RelativeSource AncestorType={x:Type RefreshView}}, Converter={converters:AddConverter}, ConverterParameter=-40}" />
+                            </DataTrigger>
+                        </Grid.Triggers>
+                        <views:PlaceDetailView BindingContext="{Binding PlaceDetailViewModel}" />
+                    </Grid>
+                    <VerticalStackLayout IsVisible="{Binding PlaceModel.IsShared}">
+                        <Grid Grid.Row="0" Padding="8,4,8,4" HorizontalOptions="FillAndExpand">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="1" HorizontalOptions="Fill">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" FontAttributes="Bold" FontSize="Micro" Text="Name" />
+                            <Label Grid.Column="1" FontAttributes="Bold" FontSize="Micro" Text="Score" />
+                            <Label Grid.Column="2" FontAttributes="Bold" FontSize="Micro" Text="Distance" />
+                        </Grid>
+                        <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource Secondary}"/>
+                        <VerticalStackLayout Grid.Row="2" BindableLayout.ItemsSource="{Binding Guesses}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:GuessModel">
+                                    <Grid HeightRequest="30" Padding="8,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.Triggers>
+                                            <DataTrigger TargetType="Grid" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource Secondary}" />
+                                            </DataTrigger>
+                                        </Grid.Triggers>
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ShowGuessCommand, Source={RelativeSource AncestorType={x:Type viewModels:PlaceDetailPageViewModel}}}" CommandParameter="{Binding}"/>
+                                        </Grid.GestureRecognizers>
 
-            <Button Grid.Column="0" Text="Share" Margin="2" Command="{Binding ShareUrlCommand}"/>
-            <Button Grid.Column="1" Text="Delete" Margin="2" Command="{Binding DeleteCommand}"/>
-        </Grid>
+                                        <Label Grid.Column="0" VerticalOptions="Center" Text="{Binding Name}" />
+                                        <Label Grid.Column="1" VerticalOptions="Center" Text="{Binding Score}" />
+                                        <Label Grid.Column="2" VerticalOptions="Center" Text="{Binding Distance, Converter={converters:FormatDistanceConverter}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+
+        <FlexLayout Grid.Row="1" HorizontalOptions="Fill" AlignContent="Stretch">
+            <Button FlexLayout.Grow="1" Text="Save" Margin="1,2" Command="{Binding UpdateMessageCommand}" IsEnabled="{Binding PlaceModel.IsModified}" IsVisible="{Binding PlaceModel.IsShared, Converter={toolkit:InvertedBoolConverter}}" />
+            <Button FlexLayout.Grow="1" Text="Share" Margin="1,2" Command="{Binding ShareUrlCommand}" />
+            <Button FlexLayout.Grow="1" Text="Delete" Margin="1,2" Command="{Binding DeleteCommand}" IsEnabled="{Binding PlaceModel.IsShared, Converter={toolkit:InvertedBoolConverter}}" />
+        </FlexLayout>
     </Grid>
 </ContentPage>
