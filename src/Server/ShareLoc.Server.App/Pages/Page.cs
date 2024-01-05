@@ -24,5 +24,5 @@ public abstract class Page
 
 	public string Render(Hash parameters) => _template.Render(parameters);
 
-	public abstract void MapEndpoints(WebApplication app);
+	public abstract void MapEndpoints(WebApplication app, string rateLimitingPolicy);
 }

@@ -12,6 +12,8 @@ public sealed class PlaceRequest
 
 public sealed class PlaceRequestValidator : AbstractValidator<PlaceRequest>
 {
+	private const int MaxImageSizeInBytes = 399_360;
+
 	public PlaceRequestValidator()
 	{
 		RuleFor(x => x.Latitude)
@@ -25,5 +27,9 @@ public sealed class PlaceRequestValidator : AbstractValidator<PlaceRequest>
 		RuleFor(x => x.Message)
 			.MaximumLength(30)
 			.WithMessage("Message has maximum length of 30 characters.");
+
+		RuleFor(x => x.Image.Length)
+			.LessThanOrEqualTo(MaxImageSizeInBytes)
+			.WithMessage("Image has a maximum size of 390kB.");
 	}
 }

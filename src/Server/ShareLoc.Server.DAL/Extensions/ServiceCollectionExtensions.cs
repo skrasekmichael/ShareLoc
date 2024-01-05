@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 using ShareLoc.Server.DAL.Repositories;
 using ShareLoc.Server.DAL.Services;
@@ -11,6 +12,8 @@ public static class ServiceCollectionExtensions
 	{
 		services.AddSingleton<PlaceRepository>();
 		services.AddSingleton<PlaceService>();
+
+		services.AddHostedService<OldEntriesRemoverBackgroundService>();
 
 		return services;
 	}

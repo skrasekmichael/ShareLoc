@@ -2,10 +2,15 @@
 using ShareLoc.Server.DAL.Repositories;
 using ShareLoc.Shared.Common.Models;
 
+using FluentResults;
+using ShareLoc.Shared.Common.Errors;
+
 namespace ShareLoc.Server.DAL.Services;
 
 public sealed class PlaceService
 {
+	private const int MaxGuesses = 30;
+
 	private const double EarthRadius = 6_371_000; //m
 	private const double EarthCircumferenceHalf = 40_075_000 / 2; //m
 	private const int MaxScore = 10_000;
@@ -35,11 +40,15 @@ public sealed class PlaceService
 		return newPlace.Id;
 	}
 
-	public async Task<GuessResultResponse?> CreateGuessAsync(Guid placeId, GuessRequest request, CancellationToken token = default)
+	public async Task<Result<GuessResultResponse>> CreateGuessAsync(Guid placeId, GuessRequest request, CancellationToken token = default)
 	{
 		Place? place = await _placeRepository.GetPlaceByIdAsync(placeId, token);
 
-		if (place is null) return null;
+		if (place is null)
+			return Result.Fail(new PlaceDoesNotExistError(placeId));
+
+		if (place.Guesses.Count >= MaxGuesses)
+			return Result.Fail(new GuessesCapExceededError(placeId, MaxGuesses));
 
 		double distance = CalculateDistance(request.Latitude, request.Longitude, place.Latitude, place.Longitude);
 		int score = CalculateScore(distance);
@@ -67,7 +76,7 @@ public sealed class PlaceService
 			Distance = distance
 		};
 
-		return response;
+		return Result.Ok(response);
 	}
 
 	private static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)

@@ -10,9 +10,10 @@ public sealed class GuessingPage : Page
 {
 	private const string CookieGuessserId = "guesserId";
 
-	public override void MapEndpoints(WebApplication app)
+	public override void MapEndpoints(WebApplication app, string rateLimitingPolicy)
 	{
-		app.MapGet("/{placeId:guid}", GuessingPageHandler);
+		app.MapGet("/{placeId:guid}", GuessingPageHandler)
+			.RequireRateLimiting(rateLimitingPolicy);
 	}
 
 	private async Task<IResult> GuessingPageHandler(
