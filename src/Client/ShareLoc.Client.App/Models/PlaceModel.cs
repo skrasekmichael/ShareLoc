@@ -6,7 +6,17 @@ public sealed partial class PlaceModel : ObservableObject
 {
 	public Guid LocalId { get; set; }
 
-	public Guid ServerId { get; set; }
+	private Guid _serverId;
+	public Guid ServerId
+	{
+		get => _serverId;
+		set
+		{
+			_serverId = value;
+			OnPropertyChanged(nameof(IsShared));
+		}
+	}
+
 	public double Latitude { get; set; }
 	public double Longitude { get; set; }
 	public byte[] Image { get; set; } = [];

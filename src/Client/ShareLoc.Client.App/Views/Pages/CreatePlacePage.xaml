@@ -16,22 +16,14 @@
         
         <views:PlaceDetailView Grid.Row="0" BindingContext="{Binding PlaceDetailViewModel}" />
 
-        <Grid Grid.Row="1" HorizontalOptions="Fill">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <Button Grid.Column="0" Margin="2" Text="Share"
-                    IsEnabled="{Binding PlaceDetailViewModel.Model, Converter={toolkit:IsNotNullConverter}}"
-                    Command="{Binding ShareUrlCommand}"/>
-
-            <Button Grid.Column="1" Margin="2" Text="Save"
+        <FlexLayout Grid.Row="1" HorizontalOptions="Fill" AlignContent="Stretch">
+            <Button FlexLayout.Grow="1" Text="Save" Margin="1,2"
                     IsEnabled="{Binding PlaceDetailViewModel.Model, Converter={toolkit:IsNotNullConverter}}"
                     Command="{Binding SaveCommand}"/>
-
-            <Button Grid.Column="2" Margin="2" Text="Cancel" Command="{Binding CancelCommand}"/>
-        </Grid>
+            <Button FlexLayout.Grow="1" Text="Share" Margin="1,2"
+                    IsEnabled="{Binding PlaceDetailViewModel.Model, Converter={toolkit:IsNotNullConverter}}"
+                    Command="{Binding ShareUrlCommand}"/>
+            <Button FlexLayout.Grow="1" Text="Cancel" Margin="1,2" Command="{Binding CancelCommand}"/>
+        </FlexLayout>
     </Grid>
 </ContentPage>

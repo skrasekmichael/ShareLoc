@@ -22,6 +22,9 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 	[ObservableProperty]
 	private PlaceDetailViewModel _placeDetailViewModel;
 
+	[ObservableProperty]
+	private bool _isSharing = false;
+
 	public CreatePlaceViewModel(ApiClient apiClient, INavigationService navigationService, LocalDbService localDbService, IAlertService alertService, PlaceDetailViewModel placeDetailViewModel, ModelMapper modelMapper, IMediator mediator, ImageDownScaler imgDownScaler, PlaceSharingService sharePlaceService)
 	{
 		_apiClient = apiClient;
@@ -56,7 +59,8 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		{
 			Image = imageBuffer,
 			Latitude = location.Latitude,
-			Longitude = location.Longitude
+			Longitude = location.Longitude,
+			CreatedUTC = DateTime.UtcNow
 		};
 	}
 
@@ -130,6 +134,8 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		if (PlaceDetailViewModel.Model is null)
 			return;
 
+		IsSharing = true;
+
 		var entityResult = await _localDbService.SavePlaceAsync(_modelMapper.Map(PlaceDetailViewModel.Model), ct);
 
 		entityResult.Switch(
@@ -153,5 +159,7 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 			async validationErrors => await _alertService.ShowAlertAsync("Error", $"Invalid values given: {validationErrors}", "OK"),
 			async error => await _alertService.ShowAlertAsync("Error", $"Error while creating place: {error}", "OK")
 		);
+
+		IsSharing = false;
 	}
 }
