@@ -19,7 +19,7 @@
                 <BindableLayout.ItemTemplate>
                     <DataTemplate x:DataType="models:PlaceModel">
                         <Grid HeightRequest="{Binding Source={RelativeSource Self}, Path=Width}"
-                              BackgroundColor="{StaticResource Secondary}"
+                              BackgroundColor="{StaticResource Primary}"
                               FlexLayout.Grow="1"
                               FlexLayout.Shrink="1"
                               FlexLayout.Basis="50%"
@@ -34,7 +34,8 @@
                             <Label Text="{Binding CreatedUTC}"
                                    VerticalOptions="End"
                                    HorizontalOptions="End"
-                                   Padding="4,1">
+                                   Padding="4,1"
+                                   TextColor="{StaticResource White}">
                                 <Label.Shadow>
                                     <Shadow Brush="Black" Offset="0,0" Radius="10" Opacity="1"/>
                                 </Label.Shadow>
@@ -44,9 +45,10 @@
                                    WidthRequest="30"
                                    HeightRequest="30"
                                    VerticalOptions="Start"
-                                   HorizontalOptions="End">
+                                   HorizontalOptions="End"
+                                   Margin="2">
                                 <Image.Behaviors>
-                                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Highlight}" />
                                 </Image.Behaviors>
                             </Image>
                         </Grid>

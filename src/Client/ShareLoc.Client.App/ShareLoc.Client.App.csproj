@@ -20,7 +20,7 @@
     <ApplicationIdGuid>00246f37-b4aa-4d37-89b0-121c20882356</ApplicationIdGuid>
 
     <!-- Versions -->
-    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>1.0.1</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
@@ -32,10 +32,10 @@
 
   <ItemGroup>
     <!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#1d3746" />
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\Images\logo.svg" ForegroundScale="0.5" Color="#1d3746" />
 
     <!-- Splash Screen -->
-    <MauiSplashScreen Include="Resources\Images\logo.svg" Color="#1d3746" BaseSize="128,128" />
+    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1d3746" BaseSize="128,128" />
 
     <!-- Images -->
     <MauiImage Include="Resources\Images\*" />

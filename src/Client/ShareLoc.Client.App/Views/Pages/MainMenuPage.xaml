@@ -10,13 +10,13 @@
     <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
         <Image Source="logo.svg" HeightRequest="200" HorizontalOptions="Center">
             <Image.Behaviors>
-                <toolkit:IconTintColorBehavior TintColor="White" />
+                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Primary},Dark={StaticResource White}}" />
             </Image.Behaviors>
         </Image>
         <VerticalStackLayout WidthRequest="200">
             <Button Margin="1" Text="Create Place" Command="{Binding GoToCreatePlacePageCommand}"/>
             <Button Margin="1" Text="My Places" Command="{Binding GoToMyPlacesPageCommand}"/>
-            <Button Margin="1" Text="My Guesses" Command="{Binding GoToMyGuessesPageCommand}"/>
+            <Button Margin="1" Text="My Guesses" IsVisible="False" Command="{Binding GoToMyGuessesPageCommand}"/>
             <Label Margin="5,2">
                 <Label.FormattedText>
                     <FormattedString>

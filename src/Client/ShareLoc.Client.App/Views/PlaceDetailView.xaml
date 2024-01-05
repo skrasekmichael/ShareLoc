@@ -23,7 +23,7 @@
             <AbsoluteLayout ZIndex="2"
                             HorizontalOptions="Start"
                             VerticalOptions="Start"
-                            Background="{StaticResource Secondary}">
+                            Background="{StaticResource Primary}">
                 <Image Source="{Binding Model.Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
                        IsVisible="{Binding IsEnlarged}"
                        AbsoluteLayout.LayoutFlags="All"
@@ -32,7 +32,8 @@
                        Opacity="0.3" />
                 <ActivityIndicator IsRunning="{Binding Model, Converter={toolkit:IsNullConverter}}"
                                    AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5"
-                                   AbsoluteLayout.LayoutFlags="All" />
+                                   AbsoluteLayout.LayoutFlags="All"
+                                   Color="{StaticResource White}" />
                 <ImageButton Source="{Binding Model.Image, Converter={toolkit:ByteArrayToImageSourceConverter}}"
                              Command="{Binding TapImageCommand}">
                     <ImageButton.Triggers>

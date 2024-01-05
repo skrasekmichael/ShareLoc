@@ -35,6 +35,9 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		}
 	}
 
+	[ObservableProperty]
+	private bool _isSharing = false;
+
 	public PlaceDetailPageViewModel(PlaceDetailViewModel placeDetailViewModel, ModelMapper modelMapper, IAlertService alertService, ApiClient apiClient, LocalDbService localDbService, INavigationService navigationService, IMediator mediator, PlaceSharingService sharePlaceService)
 	{
 		PlaceDetailViewModel = placeDetailViewModel;
@@ -138,10 +141,13 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		if (PlaceModel is null)
 			return;
 
+		IsSharing = true;
+
 		if (PlaceModel.IsShared)
 		{
 			//place is stored on the server, just share url
 			await _sharePlaceService.SharePlaceUrlAsync(PlaceModel);
+			IsSharing = false;
 			return;
 		}
 
@@ -157,5 +163,7 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 			async validationErrors => await _alertService.ShowAlertAsync("Error", $"Invalid values given: {validationErrors}", "OK"),
 			async error => await _alertService.ShowAlertAsync("Error", $"Error while creating place: {error}", "OK")
 		);
+
+		IsSharing = false;
 	}
 }
