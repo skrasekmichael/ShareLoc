@@ -9,7 +9,6 @@ public sealed class PlaceService
 	private const double EarthRadius = 6_371_000; //m
 	private const double EarthCircumferenceHalf = 40_075_000 / 2; //m
 	private const int MaxScore = 10_000;
-	private const double NormalizationConstant = MaxScore / EarthCircumferenceHalf;
 
 	private readonly PlaceRepository _placeRepository;
 
@@ -43,8 +42,7 @@ public sealed class PlaceService
 		if (place is null) return null;
 
 		double distance = CalculateDistance(request.Latitude, request.Longitude, place.Latitude, place.Longitude);
-		double score = EarthCircumferenceHalf - distance;
-		int normalizedScore = (int)(score * NormalizationConstant);
+		int score = CalculateScore(distance);
 
 		var newGuess = new Guess()
 		{
@@ -52,7 +50,7 @@ public sealed class PlaceService
 			Latitude = request.Latitude,
 			Longitude = request.Longitude,
 			Name = request.Name,
-			Score = normalizedScore,
+			Score = score,
 			Distance = distance,
 			GuesserId = request.GuesserId
 		};
@@ -65,7 +63,7 @@ public sealed class PlaceService
 		{
 			CorrectLatitude = place.Latitude,
 			CorrectLongitude = place.Longitude,
-			Score = normalizedScore,
+			Score = score,
 			Distance = distance
 		};
 
@@ -91,6 +89,14 @@ public sealed class PlaceService
 	}
 
 	private static double DegreesToRadians(double degrees) => degrees * Math.PI / 180f;
+
+	private static int CalculateScore(double distance)
+	{
+		double normalizedDistance = distance / EarthCircumferenceHalf;
+		int score = (int)(MaxScore * Math.Pow(normalizedDistance - 1, 2));
+
+		return Math.Clamp(score, 0, MaxScore);
+	}
 
 	public async Task<List<Guess>?> GetGuessesByPlaceIdAsync(Guid placeId, CancellationToken token = default)
 	{
