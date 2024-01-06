@@ -2,5 +2,5 @@
 
 public interface IEndpoints
 {
-	public void AddEndpoints(WebApplication app);
+	public void AddEndpoints(WebApplication app, string rateLimitingPolicy);
 }

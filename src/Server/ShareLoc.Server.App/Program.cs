@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCommon();
 builder.Services.AddDAL();
 builder.Services.AddDBContext(builder.Configuration);
+builder.Services.AddRateLimiting(builder.Configuration);
 
 var app = builder.Build();
 
@@ -44,6 +45,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseRateLimiter();
 
 app.MapPage<GuessingPage>();
 app.MapEndpoints<Endpoints>();
