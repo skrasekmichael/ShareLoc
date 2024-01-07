@@ -9,7 +9,6 @@ namespace ShareLoc.Client.App.Services;
 [Mapper]
 public sealed partial class ModelMapper
 {
-	[MapProperty(nameof(PlaceEntity.CratedUTC), nameof(PlaceModel.CreatedUTC))]
 	public partial PlaceModel Map(PlaceEntity placeEntity);
 
 	public partial PlaceRequest Map(PlaceModel placeModel);

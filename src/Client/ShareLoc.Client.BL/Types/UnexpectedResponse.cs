@@ -14,4 +14,6 @@ public readonly struct UnexpectedResponse : IUnexpectedError
 		StatusCode = statusCode;
 		Content = content;
 	}
+
+	public override string ToString() => $"{Name}: {StatusCode} - {Content}";
 }

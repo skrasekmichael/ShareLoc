@@ -115,9 +115,9 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		if (PlaceDetailViewModel.Model is null)
 			return;
 
-		var entityResult = await _localDbService.SavePlaceAsync(_modelMapper.Map(PlaceDetailViewModel.Model), ct);
+		var entityResult = _localDbService.SavePlace(_modelMapper.Map(PlaceDetailViewModel.Model));
 
-		entityResult.Switch(
+		await entityResult.Match<ValueTask>(
 			async entity =>
 			{
 				PlaceDetailViewModel.Model.LocalId = entity.Value.LocalId;
@@ -136,23 +136,24 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 
 		IsSharing = true;
 
-		var entityResult = await _localDbService.SavePlaceAsync(_modelMapper.Map(PlaceDetailViewModel.Model), ct);
+		var entityResult = _localDbService.SavePlace(_modelMapper.Map(PlaceDetailViewModel.Model));
 
-		entityResult.Switch(
+		await entityResult.Match<ValueTask>(
 			entity =>
 			{
 				PlaceDetailViewModel.Model.LocalId = entity.Value.LocalId;
 				_mediator.Publish(new PlaceStoredMessage(PlaceDetailViewModel.Model));
+				return ValueTask.CompletedTask;
 			},
 			async error => await _alertService.ShowAlertAsync("Error", $"Failed to save Place", "OK")
 		);
 
 		var response = await _apiClient.CreatePlaceAsync(_modelMapper.Map(PlaceDetailViewModel.Model), ct);
 
-		response.Switch(
+		await response.Match<ValueTask>(
 			async (serverId) =>
 			{
-				await _localDbService.SharePlaceAsync(PlaceDetailViewModel.Model.LocalId, serverId, DateTime.UtcNow);
+				_localDbService.SharePlace(PlaceDetailViewModel.Model.LocalId, serverId, DateTime.UtcNow);
 				await _sharePlaceService.SharePlaceUrlAsync(PlaceDetailViewModel.Model);
 				await _navigationService.GoToHomeAsync();
 			},

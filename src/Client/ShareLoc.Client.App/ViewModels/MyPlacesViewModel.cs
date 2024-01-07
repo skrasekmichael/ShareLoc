@@ -48,7 +48,7 @@ public sealed partial class MyPlacesPageViewModel : BaseViewModel
 
 	protected override async Task LoadAsync(CancellationToken ct)
 	{
-		var places = (await _dbService.GetPlacesAsync(ct))
+		var places = _dbService.GetPlaces()
 			.Select(entity => _modelMapper.Map(entity))
 			.ToList();
 

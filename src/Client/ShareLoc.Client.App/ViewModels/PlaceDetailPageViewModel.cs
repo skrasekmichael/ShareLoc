@@ -67,11 +67,15 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		if (PlaceModel.IsShared)
 		{
 			var response = await _apiClient.GetGuessesAsync(PlaceModel.ServerId, ct);
-			response.Switch(
-				data => guesses = data,
+			await response.Match<ValueTask>(
+				data =>
+				{
+					guesses = data;
+					return ValueTask.CompletedTask;
+				},
 				async notFound =>
 				{
-					await _localDbService.RemoveServerIdAsync(PlaceModel.LocalId, ct);
+					_localDbService.RemoveServerId(PlaceModel.LocalId);
 					_mediator.Publish(new PlaceSharingStateChangedMessage(PlaceModel.LocalId, Guid.Empty));
 					await _alertService.ShowAlertAsync("Place not found.", "Place was removed from the server.", "OK");
 				},
@@ -110,7 +114,7 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		if (!confirm)
 			return;
 
-		await _localDbService.DeleteAsync(PlaceModel.LocalId, ct);
+		_localDbService.Delete(PlaceModel.LocalId);
 
 		_mediator.Publish(new PlaceDeletedMessage(PlaceModel.LocalId));
 		await _navigationService.GoBackAsync();
@@ -122,13 +126,14 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		if (PlaceModel is null)
 			return;
 
-		var result = await _localDbService.UpdateMessageAsync(PlaceModel.LocalId, PlaceModel.Message, ct);
-		result.Switch(
+		var result = _localDbService.UpdateMessage(PlaceModel.LocalId, PlaceModel.Message);
+		await result.Match<ValueTask>(
 			success =>
 			{
 				PlaceModel.IsModified = false;
 				_mediator.Publish(new PlaceMessageUpdatedMessage(PlaceModel.LocalId, PlaceModel.Message));
 				Toast.Make("Message successfully updated.", ToastDuration.Short).Show();
+				return ValueTask.CompletedTask;
 			},
 			async notFound => await _alertService.ShowAlertAsync("Place not found.", "Bug! this this place should not have been available after deleting.", "OK"),
 			async unexpectedError => await _alertService.ShowAlertAsync("Unexpected error.", "There was an unexpected error.", "OK")
@@ -152,11 +157,10 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		}
 
 		var response = await _apiClient.CreatePlaceAsync(_modelMapper.Map(PlaceModel), ct);
-
-		response.Switch(
+		await response.Match<ValueTask>(
 			async (serverId) =>
 			{
-				await _localDbService.SharePlaceAsync(PlaceModel.LocalId, serverId, DateTime.UtcNow);
+				_localDbService.SharePlace(PlaceModel.LocalId, serverId, DateTime.UtcNow);
 				_mediator.Publish(new PlaceSharingStateChangedMessage(PlaceModel.LocalId, serverId));
 				await _sharePlaceService.SharePlaceUrlAsync(PlaceModel);
 			},

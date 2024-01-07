@@ -1,24 +1,22 @@
-﻿using Microsoft.Extensions.Options;
-
-using ShareLoc.Client.App.Models;
+﻿using ShareLoc.Client.App.Models;
 using ShareLoc.Client.BL;
 
 namespace ShareLoc.Client.App.Services;
 
 public sealed class PlaceSharingService
 {
-	private readonly IOptions<ServerOptions> _serverOptions;
+	private readonly ServerOptions _options;
 
-	public PlaceSharingService(IOptions<ServerOptions> serverOptions)
+	public PlaceSharingService(ServerOptions options)
 	{
-		_serverOptions = serverOptions;
+		_options = options;
 	}
 
 	public Task SharePlaceUrlAsync(PlaceModel place)
 	{
 		return Share.RequestAsync(new ShareTextRequest
 		{
-			Text = $"{_serverOptions.Value.Address}/{place.ServerId}",
+			Text = $"{_options.Address}/{place.ServerId}",
 			Title = place.Message
 		});
 	}

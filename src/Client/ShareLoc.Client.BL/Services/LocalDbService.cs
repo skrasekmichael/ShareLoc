@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using OneOf;
+﻿using OneOf;
 using OneOf.Types;
 
 using ShareLoc.Client.DAL;
@@ -18,25 +16,24 @@ public sealed class LocalDbService
 		_dbContext = dbContext;
 	}
 
-	public async Task<OneOf<Success<PlaceEntity>, Error<string>>> SavePlaceAsync(PlaceRequest place, CancellationToken ct = default)
+	public OneOf<Success<PlaceEntity>, Error<string>> SavePlace(PlaceRequest place)
 	{
+		var localId = Guid.NewGuid();
+		var entity = new PlaceEntity
+		{
+			LocalId = localId,
+			CreatedUTC = DateTime.UtcNow,
+			Image = place.Image,
+			Latitude = place.Latitude,
+			Longitude = place.Longitude,
+			Message = place.Message,
+			ServerId = Guid.Empty,
+			SharedUTC = DateTime.MinValue
+		};
+
 		try
 		{
-			Guid localId = Guid.NewGuid();
-			PlaceEntity entity = new()
-			{
-				LocalId = localId,
-				CratedUTC = DateTime.UtcNow,
-				Image = place.Image,
-				Latitude = place.Latitude,
-				Longitude = place.Longitude,
-				Message = place.Message,
-				ServerId = Guid.Empty,
-				SharedUTC = DateTime.MinValue
-			};
-
-			_dbContext.Places.Add(entity);
-			await _dbContext.SaveChangesAsync(ct);
+			_dbContext.Places.Insert(entity);
 			return new Success<PlaceEntity>(entity);
 		}
 		catch (Exception ex)
@@ -45,9 +42,9 @@ public sealed class LocalDbService
 		}
 	}
 
-	public async Task<OneOf<Success, NotFound, Error<string>>> SharePlaceAsync(Guid localPlaceId, Guid serverPlaceId, DateTime sharedUTC, CancellationToken ct = default)
+	public OneOf<Success, NotFound, Error<string>> SharePlace(Guid localPlaceId, Guid serverPlaceId, DateTime sharedUTC)
 	{
-		var place = await _dbContext.Places.FindAsync([localPlaceId], ct);
+		var place = _dbContext.Places.FindById(new(localPlaceId));
 
 		if (place is null)
 			return new NotFound();
@@ -60,7 +57,7 @@ public sealed class LocalDbService
 
 		try
 		{
-			await _dbContext.SaveChangesAsync(ct);
+			_dbContext.Places.Update(place);
 			return new Success();
 		}
 		catch (Exception ex)
@@ -69,9 +66,9 @@ public sealed class LocalDbService
 		}
 	}
 
-	public async Task<OneOf<Success, NotFound, Error<string>>> UpdateMessageAsync(Guid localPlaceId, string message, CancellationToken ct = default)
+	public OneOf<Success, NotFound, Error<string>> UpdateMessage(Guid localPlaceId, string message)
 	{
-		var place = await _dbContext.Places.FindAsync([localPlaceId], ct);
+		var place = _dbContext.Places.FindById(new(localPlaceId));
 
 		if (place is null)
 			return new NotFound();
@@ -83,7 +80,7 @@ public sealed class LocalDbService
 
 		try
 		{
-			await _dbContext.SaveChangesAsync(ct);
+			_dbContext.Places.Update(place);
 			return new Success();
 		}
 		catch (Exception ex)
@@ -92,26 +89,17 @@ public sealed class LocalDbService
 		}
 	}
 
-	public async Task DeleteAsync(Guid placeId, CancellationToken ct = default)
-	{
-		var place = await _dbContext.Places.FindAsync([placeId], ct);
-		if (place is not null)
-		{
-			_dbContext.Places.Remove(place);
-			await _dbContext.SaveChangesAsync(ct);
-		}
-	}
+	public void Delete(Guid localPlaceId) => _dbContext.Places.Delete(new(localPlaceId));
 
-	public async Task RemoveServerIdAsync(Guid placeId, CancellationToken ct = default)
+	public void RemoveServerId(Guid localPlaceId)
 	{
-		var place = await _dbContext.Places.FindAsync([placeId], ct);
+		var place = _dbContext.Places.FindById(new(localPlaceId));
 		if (place is not null)
 		{
 			place.ServerId = Guid.Empty;
-			await _dbContext.SaveChangesAsync(ct);
+			_dbContext.Places.Update(place);
 		}
 	}
 
-	public Task<List<PlaceEntity>> GetPlacesAsync(CancellationToken ct = default) =>
-		_dbContext.Places.Include(place => place.Guesses).AsNoTracking().ToListAsync(ct);
+	public IEnumerable<PlaceEntity> GetPlaces() => _dbContext.Places.FindAll();
 }

@@ -4,7 +4,6 @@ using ShareLoc.Client.App.Messages;
 
 namespace ShareLoc.Client.App.Services;
 
-
 public sealed class Mediator : IMediator
 {
 	public IMessenger Messenger { get; }

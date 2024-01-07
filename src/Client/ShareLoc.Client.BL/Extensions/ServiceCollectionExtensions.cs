@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 using ShareLoc.Client.BL.Services;
 
@@ -10,7 +9,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddBL(this IServiceCollection serviceCollection)
 	{
 		serviceCollection.AddHttpClient<ApiClient>("ServerHttpClient")
-#if DEBUG
+			//#if DEBUG
 			.ConfigurePrimaryHttpMessageHandler(() =>
 			{
 				var handler = new HttpClientHandler
@@ -21,16 +20,17 @@ public static class ServiceCollectionExtensions
 
 				return handler;
 			})
-#endif
+			//#endif
 			.ConfigureHttpClient((serviceProvider, httpClient) =>
 			{
-				var serverOptions = serviceProvider.GetRequiredService<IOptions<ServerOptions>>();
-				httpClient.BaseAddress = new Uri(serverOptions.Value.Address);
+				var options = serviceProvider.GetRequiredService<ServerOptions>();
+				httpClient.BaseAddress = new Uri(options.Address);
 			});
 
 		return serviceCollection
 			.AddSingleton<EntityMapper>()
 			.AddSingleton(new ImageDownScaler(400 * 1024, [1.0, 0.5, 0.25, 0.18]))
-			.AddScoped<LocalDbService>();
+			.AddScoped<LocalDbService>()
+			.AddSingleton<ServerOptions>();
 	}
 }

@@ -8,4 +8,6 @@ public readonly struct UnexpectedError : IUnexpectedError
 	{
 		Name = name;
 	}
+
+	public override string ToString() => Name;
 }
