@@ -8,4 +8,6 @@ public readonly struct DeserializationFailed : IUnexpectedError
 	{
 		Name = "Response Deserialization Failed";
 	}
+
+	public override string ToString() => Name;
 }

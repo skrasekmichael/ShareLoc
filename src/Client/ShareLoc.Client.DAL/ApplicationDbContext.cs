@@ -1,20 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LiteDB;
 
 using ShareLoc.Client.DAL.Entities;
 
 namespace ShareLoc.Client.DAL;
 
-public sealed class ApplicationDbContext : DbContext
+public sealed class ApplicationDbContext
 {
-	public required DbSet<PlaceEntity> Places { get; init; }
-	public required DbSet<GuessEntity> Guesses { get; init; }
+	private readonly ILocalDbConfigurationService _configurationService;
 
-	public ApplicationDbContext(DbContextOptions options) : base(options) { }
+	public LiteDatabase Database { get; private set; } = default!;
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	public ILiteCollection<PlaceEntity> Places => Database.GetCollection<PlaceEntity>("places");
+
+	public ApplicationDbContext(ILocalDbConfigurationService configurationService)
 	{
-		modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+		_configurationService = configurationService;
+	}
 
-		base.OnModelCreating(modelBuilder);
+	public void Initialize()
+	{
+		Database = new(_configurationService.GetFilePath());
+
+		var collection = Database.GetCollection<PlaceEntity>("places");
+		collection.EnsureIndex(place => place.LocalId);
 	}
 }

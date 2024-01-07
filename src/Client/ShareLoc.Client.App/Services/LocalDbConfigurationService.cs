@@ -4,11 +4,7 @@ namespace ShareLoc.Client.App.Services;
 
 public sealed class LocalDbConfigurationService : ILocalDbConfigurationService
 {
-	private const string SQLiteDbFileName = "ShareLoc.db3";
+	private const string LiteDbFileName = "ShareLoc.db";
 
-	public string GetConnectionString()
-	{
-		var path = Path.Combine(FileSystem.AppDataDirectory, SQLiteDbFileName);
-		return $"Data Source={path}";
-	}
+	public string GetFilePath() => Path.Combine(FileSystem.AppDataDirectory, LiteDbFileName);
 }

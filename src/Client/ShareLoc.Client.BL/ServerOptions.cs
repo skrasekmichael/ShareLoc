@@ -2,7 +2,5 @@
 
 public sealed class ServerOptions
 {
-	public const string SectionName = "Server";
-
-	public required string Address { get; init; }
+	public string Address { get; } = "http://ec2-51-21-37-120.eu-north-1.compute.amazonaws.com";
 }

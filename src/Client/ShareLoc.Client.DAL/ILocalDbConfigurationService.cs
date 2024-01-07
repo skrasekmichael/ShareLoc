@@ -2,5 +2,5 @@
 
 public interface ILocalDbConfigurationService
 {
-	public string GetConnectionString();
+	public string GetFilePath();
 }

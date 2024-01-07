@@ -1,13 +1,10 @@
-﻿using System.Reflection;
+﻿using CommunityToolkit.Maui;
 
-using CommunityToolkit.Maui;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+#if DEBUG
 using Microsoft.Extensions.Logging;
+#endif
 
 using ShareLoc.Client.App.Extensions;
-using ShareLoc.Client.BL;
 using ShareLoc.Client.BL.Extensions;
 using ShareLoc.Client.DAL;
 using ShareLoc.Shared.Common;
@@ -20,11 +17,6 @@ public static class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
 
-		var appSettingsStream = Assembly.GetExecutingAssembly()
-			.GetManifestResourceStream("AppSettings") ?? throw new ArgumentNullException();
-
-		builder.Configuration.AddJsonStream(appSettingsStream);
-
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
@@ -33,9 +25,6 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
-
-		builder.Services.AddOptions<ServerOptions>()
-			.Bind(builder.Configuration.GetRequiredSection(ServerOptions.SectionName));
 
 		builder.Services
 			.AddCommon()
@@ -48,12 +37,6 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		var app = builder.Build();
-
-		using var scope = app.Services.CreateScope();
-		var dbContext = app.Services.GetRequiredService<ApplicationDbContext>();
-		dbContext.Database.Migrate();
-
-		return app;
+		return builder.Build();
 	}
 }
