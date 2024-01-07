@@ -160,6 +160,7 @@ public sealed partial class PlaceDetailPageViewModel : BaseViewModel
 		await response.Match<ValueTask>(
 			async (serverId) =>
 			{
+				PlaceModel.ServerId = serverId;
 				_localDbService.SharePlace(PlaceModel.LocalId, serverId, DateTime.UtcNow);
 				_mediator.Publish(new PlaceSharingStateChangedMessage(PlaceModel.LocalId, serverId));
 				await _sharePlaceService.SharePlaceUrlAsync(PlaceModel);

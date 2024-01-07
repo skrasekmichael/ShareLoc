@@ -153,6 +153,7 @@ public sealed partial class CreatePlaceViewModel : BaseViewModel
 		await response.Match<ValueTask>(
 			async (serverId) =>
 			{
+				PlaceDetailViewModel.Model.ServerId = serverId;
 				_localDbService.SharePlace(PlaceDetailViewModel.Model.LocalId, serverId, DateTime.UtcNow);
 				await _sharePlaceService.SharePlaceUrlAsync(PlaceDetailViewModel.Model);
 				await _navigationService.GoToHomeAsync();
